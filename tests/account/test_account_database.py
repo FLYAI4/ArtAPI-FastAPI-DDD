@@ -3,7 +3,8 @@ import pytest
 import base64
 from src.shared_kernel.infra.database.connection import PostgreManager
 from src.account.infra.database.repository import AccountRepository
-from src.account.domain.entity import AccountInfo
+from src.account.domain.entity import AccountInfo, UserInfo
+from src.account.domain.exception import DBError
 
 # Mock data
 ID = "test@naver.com"
@@ -37,5 +38,28 @@ def test_account_repository_can_insert_user_account(mockup, session):
     # when : DB에 데이터 입력 요청
     result = AccountRepository.insert_user_account(session, mockup)
 
+    # then : result.id
+    assert result.id == unique_id
+
+    # when : DB 데이터 확인
+    user_info = UserInfo(id=unique_id)
+    result = AccountRepository.get_user_account(session, user_info)
+
     # then : 데이터 정상적으로 입력 되었는지 확인
     assert result.id == unique_id
+    assert result.password == PASSWORD
+    assert result.name == NAME
+    assert result.gender == GENDER
+    assert result.age == AGE
+    assert result.status
+
+
+def test_account_repository_cannot_get_user_account(session):
+    # given : DB에 없는 조회할 유저 ID
+    WRONG_ID = "wrong_id"
+    user_info = UserInfo(id=WRONG_ID)
+
+    # then : DBError
+    with pytest.raises(DBError):
+        # when : DB 데이터 확인
+        AccountRepository.get_user_account(session, user_info)

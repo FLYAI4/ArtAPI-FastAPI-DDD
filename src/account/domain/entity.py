@@ -8,6 +8,7 @@ class AccountInfo:
     name: str
     gender: str
     age: str
+    status: str = True
 
 
 @dataclass

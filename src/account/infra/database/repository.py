@@ -1,3 +1,4 @@
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 from src.account.adapter.repository_abs import AccountRepositoryABS
 from src.account.domain.entity import AccountInfo, UserInfo
@@ -22,5 +23,23 @@ class AccountRepository(AccountRepositoryABS):
                 session.add(obj)
                 session.commit()
             return UserInfo(id=user_account.id)
+        except Exception as e:
+            raise DBError(**RepositoryError.DBProcess.value, err=e)
+
+    def get_user_account(
+            session: Session, user_info: UserInfo
+    ) -> AccountInfo:
+        try:
+            with session:
+                sql = select(Account).filter(Account.id == user_info.id)
+                obj = session.execute(sql).scalar_one()
+                return AccountInfo(
+                    id=obj.id,
+                    password=obj.password,
+                    name=obj.name,
+                    gender=obj.gender,
+                    age=obj.age,
+                    status=obj.status
+                )
         except Exception as e:
             raise DBError(**RepositoryError.DBProcess.value, err=e)
