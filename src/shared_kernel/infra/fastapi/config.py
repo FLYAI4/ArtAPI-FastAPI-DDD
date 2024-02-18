@@ -11,6 +11,7 @@ class EnvSettings(BaseSettings):
         'POSTGRESQL_CONNECTION_URL'
         )
     DB_NAME: ClassVar[str] = os.environ.get('DB_NAME')
+    DEK_KEY: ClassVar[str] = os.environ.get('DEK_KEY')
 
 
 settings = EnvSettings()

@@ -5,6 +5,7 @@ from src.account.infra.database.repository import AccountRepository
 from src.account.domain.entity import AccountInfo, UserInfo
 from src.account.domain.service.sign_up import SignUpService
 from src.account.domain.exception import UserError
+from src.account.domain.util.cipher import CipherManager
 
 # Mock data
 PASSWORD = "test1234"
@@ -33,9 +34,29 @@ def test_cannot_sign_up_wrong_email_with_existence_user(session):
 
     # when : 가입 요청
     with pytest.raises(UserError):
-        SignUpService().sign_up(session, mockup)
+        SignUpService().sign_up_user(session, mockup)
 
     # 계정 삭제
     user_info = UserInfo(id=unique_id)
     result = AccountRepository.delete_user_account(session, user_info)
     assert result.id == unique_id
+
+
+def test_can_sign_up_user_with_valid_user(session):
+    # given : 유효한 계정
+    unique_id = "accountservice1@naver.com"
+    mockup = AccountInfo(
+        id=unique_id,
+        password=PASSWORD,
+        name=NAME,
+        gender=GENDER,
+        age=AGE
+    )
+
+    # when : 가입 요청
+    result = SignUpService().sign_up_user(session, mockup)
+
+    # then : 비밀번호 암호화
+    assert result.id == unique_id
+    encrypt_password = CipherManager().encrypt_password(PASSWORD)
+    assert result.password == encrypt_password
