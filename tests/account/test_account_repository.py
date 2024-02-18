@@ -53,6 +53,9 @@ def test_account_repository_can_insert_user_account(mockup, session):
     assert result.age == AGE
     assert result.status
 
+    result = AccountRepository.delete_user_account(session, user_info)
+    assert result.id == unique_id
+
 
 def test_account_repository_cannot_get_user_account(session):
     # given : DB에 없는 조회할 유저 ID
@@ -80,3 +83,7 @@ def test_account_repository_can_get_all_user_account(session, mockup):
     # then : 조회된 데이터 확인
     assert len(result) > 0
     assert any(r.id == unique_id for r in result)
+
+    user_info = UserInfo(id=unique_id)
+    result = AccountRepository.delete_user_account(session, user_info)
+    assert result.id == unique_id

@@ -20,3 +20,9 @@ class AccountRepositoryABS(ABC):
     @abstractmethod
     def get_all_user_account(self, session: Session) -> List[UserInfo]:
         pass
+
+    @abstractmethod
+    def delete_user_account(
+        self, session: Session, user_info: UserInfo
+    ) -> UserInfo:
+        pass
