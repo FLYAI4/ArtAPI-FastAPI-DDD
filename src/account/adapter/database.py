@@ -4,7 +4,7 @@ from src.account.domain.entity import AccountInfo, UserInfo
 from typing import List
 
 
-class AccountRepositoryABS(ABC):
+class AccountRepositoryInterface(ABC):
     @abstractmethod
     def insert_user_account(
         self, session: Session, user_account: AccountInfo
