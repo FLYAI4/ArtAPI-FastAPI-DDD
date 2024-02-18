@@ -13,4 +13,4 @@ class AccountInfo:
 @dataclass
 class UserInfo:
     id: str
-    password: str
+    password: str = ""
