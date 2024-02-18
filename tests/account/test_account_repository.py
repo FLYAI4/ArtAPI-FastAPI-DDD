@@ -63,3 +63,20 @@ def test_account_repository_cannot_get_user_account(session):
     with pytest.raises(DBError):
         # when : DB 데이터 확인
         AccountRepository.get_user_account(session, user_info)
+
+
+def test_account_repository_can_get_all_user_account(session, mockup):
+    # given : 생성된 계정 존재
+    unique_id = ID + str(uuid.uuid4())[:10]
+    mockup.id = unique_id
+
+    result = AccountRepository.insert_user_account(session, mockup)
+
+    assert result.id == unique_id
+
+    # when : DB에 데이터 전체 조회
+    result = AccountRepository.get_all_user_account(session)
+
+    # then : 조회된 데이터 확인
+    assert len(result) > 0
+    assert any(r.id == unique_id for r in result)

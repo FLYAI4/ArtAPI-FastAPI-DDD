@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from sqlalchemy.orm import Session
 from src.account.domain.entity import AccountInfo, UserInfo
+from typing import List
 
 
 class AccountRepositoryABS(ABC):
@@ -14,4 +15,8 @@ class AccountRepositoryABS(ABC):
     def get_user_account(
         self, session: Session, user_info: UserInfo
     ) -> AccountInfo:
+        pass
+
+    @abstractmethod
+    def get_all_user_account(self, session: Session) -> List[UserInfo]:
         pass

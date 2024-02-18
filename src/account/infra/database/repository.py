@@ -1,3 +1,4 @@
+from typing import List
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 from src.account.adapter.repository_abs import AccountRepositoryABS
@@ -41,5 +42,16 @@ class AccountRepository(AccountRepositoryABS):
                     age=obj.age,
                     status=obj.status
                 )
+        except Exception as e:
+            raise DBError(**RepositoryError.DBProcess.value, err=e)
+
+    def get_all_user_account(session: Session) -> List[UserInfo]:
+        try:
+            all_user_account = list()
+            with session:
+                sql = select(Account)
+                for obj in session.execute(sql):
+                    all_user_account.append(UserInfo(id=obj.Account.id))
+            return all_user_account
         except Exception as e:
             raise DBError(**RepositoryError.DBProcess.value, err=e)
