@@ -11,3 +11,9 @@ class OriginImageInfo:
 class FileInfo:
     unique_id: str
     path: str
+
+
+@dataclass
+class GeneratedIdInfo:
+    id: str
+    generated_id: str
