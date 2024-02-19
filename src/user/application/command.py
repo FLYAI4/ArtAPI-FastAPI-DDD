@@ -1,4 +1,4 @@
-from src.user.adapter.rest.request import InsertImageRequest
+from fastapi import UploadFile
 from src.user.domain.entity import FileInfo, OriginImageInfo
 from src.user.domain.service.insert_image import InsertImageService
 
@@ -7,11 +7,13 @@ class UserCommandUseCase:
     def __init__(self) -> None:
         pass
 
-    def insert_image(self, request: InsertImageRequest) -> FileInfo:
+    def insert_image(
+            self, id: str, file: UploadFile
+    ) -> FileInfo:
         # convert request to entity
         origin_image = OriginImageInfo(
-            id=request.id,
-            image_file=request.image_file
+            id=id,
+            image_file=file.file.read()
         )
 
         # save local

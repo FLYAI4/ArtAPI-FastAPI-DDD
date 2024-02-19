@@ -1,5 +1,5 @@
 import os
-from src.user.adapter.rest.request import InsertImageRequest
+from fastapi import UploadFile
 from src.user.application.command import UserCommandUseCase
 
 
@@ -13,11 +13,8 @@ IMAGE_PATH = os.path.abspath(os.path.join(test_img_path, "test.jpg"))
 
 def test_can_insert_image_with_valid():
     with open(IMAGE_PATH, "rb") as f:
-        request = InsertImageRequest(
-            id=ID,
-            image_file=f.read()
-        )
+        file = UploadFile(file=f)
+        result = UserCommandUseCase().insert_image(ID, file)
 
-    result = UserCommandUseCase().insert_image(request)
     assert result.unique_id.split("_")[-1] == ID.split("@")[0]
     assert os.path.isfile(result.path)
