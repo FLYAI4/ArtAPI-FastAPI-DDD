@@ -17,3 +17,10 @@ class FileInfo:
 class GeneratedIdInfo:
     id: str
     generated_id: str
+
+
+@dataclass
+class GeneratedContent:
+    generated_id: str
+    tag: str
+    content: bytes = None

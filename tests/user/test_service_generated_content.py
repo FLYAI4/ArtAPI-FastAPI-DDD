@@ -1,4 +1,5 @@
 import os
+import pytest
 from src.user.domain.entity import GeneratedIdInfo, OriginImageInfo
 from src.user.domain.service.insert_image import InsertImageService
 from src.user.domain.service.generated_content import GeneratedContentService
@@ -12,7 +13,8 @@ ID = "userservice1@naver.com"
 IMAGE_PATH = os.path.abspath(os.path.join(test_img_path, "test.jpg"))
 
 
-def test_can_generated_content_with_valid():
+@pytest.mark.asyncio
+async def test_can_generated_content_with_valid():
     # 이미지 입력
     with open(IMAGE_PATH, "rb") as f:
         origin_image = OriginImageInfo(
@@ -27,7 +29,6 @@ def test_can_generated_content_with_valid():
     # given : 유효한 데이터
     generated_id_info = GeneratedIdInfo(id=ID, generated_id=result.unique_id)
 
-    text_content, coord_content = GeneratedContentService().create_generated_content(generated_id_info)
-    print(text_content)
-    print()
-    print(coord_content)
+    async for chunck in GeneratedContentService().create_generated_content(generated_id_info):
+        if chunck.tag == "text":
+            assert chunck.data
