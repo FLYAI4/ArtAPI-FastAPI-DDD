@@ -48,5 +48,4 @@ async def test_can_generate_content_with_valid(command):
 
     # when : 콘텐츠 생성 요청
     async for chunk in command.generate_content(ID, mockup):
-        assert chunk.generated_id == result.unique_id
-        assert chunk.tag in ["gif", "finish"]
+        assert chunk.decode().split(":")[0] in ["gif", "finish"]

@@ -1,4 +1,5 @@
 from fastapi import UploadFile
+from sqlalchemy.orm import Session
 from src.user.domain.entity import (
     FileInfo,
     OriginImageInfo,
@@ -15,8 +16,8 @@ from src.user.domain.entity import GeneratedContentModel
 class UserCommandUseCase:
     def __init__(
             self,
-            mongo_session,
-            postgre_session
+            mongo_session: any = None,
+            postgre_session: Session = None
     ) -> None:
         self.mogno_session = mongo_session
         self.postgre_session = postgre_session
@@ -47,11 +48,7 @@ class UserCommandUseCase:
             generated_id_info
         ):
             if content.tag == "gif":
-                yield GeneratedContent(
-                    generated_id=generated_id_info.generated_id,
-                    tag=content.tag,
-                    content=content.data
-                )
+                yield f"{content.tag}: {content.data}\n".encode()
             if content.tag == "text":
                 text_content = GeneratedContent(
                     generated_id=generated_id_info.generated_id,
@@ -92,8 +89,4 @@ class UserCommandUseCase:
             )
 
         # 생성 완료 응답 -> finish
-        yield GeneratedContent(
-                    generated_id=generated_id_info.generated_id,
-                    tag="finish",
-                    content=generated_id_info.id
-                )
+        yield f"finish: {generated_id_info.id}\n".encode()
