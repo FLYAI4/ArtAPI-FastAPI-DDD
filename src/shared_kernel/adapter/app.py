@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from src.account.adapter.rest.api import account
+from src.shared_kernel.infra.fastapi.error_handler import error_handlers
 
 
 def create_app():
@@ -11,7 +12,7 @@ def create_app():
     app.include_router(account)
 
     # Handler
-    # error_handlers(app)
+    error_handlers(app)
 
     # CORS
     app.add_middleware(

@@ -47,6 +47,45 @@ def test_can_sign_up_with_valid(client):
     assert response.json()["data"]["id"] == ID
 
 
+@pytest.mark.order(1)
+def test_cannot_sign_up_with_invalid(client):
+    ## given : 유효하지 않은 payload(name 없이)
+    mockup = {
+        "id": ID,
+        "password": PASSWORD,
+        "gender": GENDER,
+        "age": AGE
+    }
+
+    # when : 회원가입 요청
+    response = client.post(
+        "/account/signup",
+        json=mockup
+    )
+
+    # then : 에러 응답(pydantic type error)
+    assert response.status_code == 422
+    assert response.json()["meta"]["message"] == "A required value is missing. Please check."
+
+
+@pytest.mark.order(1)
+def test_cannot_log_in_with_invalid(client, session):
+    # given : 유효한 payload
+    mockup = {
+        "id": ID
+    }
+
+    # when : 로그인 요청
+    response = client.post(
+        "/account/login",
+        json=mockup
+    )
+
+    # then : 에러 응답(pydantic type error)
+    assert response.status_code == 422
+    assert response.json()["meta"]["message"] == "A required value is missing. Please check."
+
+
 @pytest.mark.order(2)
 def test_can_log_in_with_valid(client, session):
     # given : 유효한 payload
@@ -71,4 +110,3 @@ def test_can_log_in_with_valid(client, session):
     user_info = UserInfo(id=ID)
     result = AccountRepository.delete_user_account(session, user_info)
     assert result.id == ID
-
