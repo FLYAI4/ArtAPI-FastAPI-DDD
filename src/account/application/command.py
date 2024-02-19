@@ -33,7 +33,7 @@ class AccountCommandUseCase:
         user_info = self.repository.insert_user_account(self.session, user_account)
         return user_info
 
-    def log_in_user(self, request: LogInUserRequest) -> UserInfo:
+    def log_in_user(self, request: LogInUserRequest) -> TokenInfo:
         # convert request -> entity
         user_info = UserInfo(
             id=request.id,
