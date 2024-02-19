@@ -84,6 +84,8 @@ class UserCommandUseCase:
             coord_content=coord_content.content
         )
         UserRepository.insert_content(self.mogno_session, generated_content)
+
         # save posgreSQL -> generated_id
+        
 
         # 생성 완료 응답 -> finish

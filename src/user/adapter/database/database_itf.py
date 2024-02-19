@@ -8,3 +8,9 @@ class UserRepositoryInterface(ABC):
         mongo_session, generated_content: GeneratedContentModel
     ) -> GeneratedIdInfo:
         pass
+
+    @abstractmethod
+    def insert_generated_id(
+        postgre_session, genereted_id_info: GeneratedIdInfo
+    ) -> GeneratedIdInfo:
+        pass
