@@ -30,5 +30,5 @@ class GeneratedContent:
 class GeneratedContentModel:
     id: str
     generated_id: str
-    text_content: GeneratedContent
-    coord_content: GeneratedContent
+    text_content: bytes
+    coord_content: bytes
