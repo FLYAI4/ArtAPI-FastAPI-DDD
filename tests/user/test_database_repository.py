@@ -55,7 +55,6 @@ def test_can_insert_generated_id(postgre_session):
     assert result.id == ID
     assert result.generated_id == generated_id
 
-
     # 데이터 삭제
     result = UserRepository.delete_generated_id(postgre_session, generated_info)
     assert result.id == ID

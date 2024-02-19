@@ -15,9 +15,11 @@ from src.user.domain.entity import GeneratedContentModel
 class UserCommandUseCase:
     def __init__(
             self,
-            mongo_session
+            mongo_session,
+            postgre_session
     ) -> None:
         self.mogno_session = mongo_session
+        self.postgre_session = postgre_session
 
     def insert_image(
             self, id: str, file: UploadFile
@@ -73,9 +75,6 @@ class UserCommandUseCase:
                     generated_id_info, audio_content
                 )
 
-        print(text_content.content)
-        print(coord_content.content)
-        print(type(audio_content.content))
         # save mongodb -> text, coord DB 저장
         generated_content = GeneratedContentModel(
             id=generated_id_info.id,
@@ -83,9 +82,18 @@ class UserCommandUseCase:
             text_content=text_content.content,
             coord_content=coord_content.content
         )
-        UserRepository.insert_content(self.mogno_session, generated_content)
+        generated_id_info = UserRepository.insert_content(
+            self.mogno_session, generated_content
+            )
 
         # save posgreSQL -> generated_id
-        
+        generated_id_info = UserRepository.insert_generated_id(
+            self.postgre_session, generated_id_info
+            )
 
         # 생성 완료 응답 -> finish
+        yield GeneratedContent(
+                    generated_id=generated_id_info.generated_id,
+                    tag="finish",
+                    content=generated_id_info.id
+                )
