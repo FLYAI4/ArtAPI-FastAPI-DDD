@@ -44,7 +44,7 @@ def test_cannot_log_in_with_wrong_password(session):
         age=AGE
     )
 
-    command = AccountCommandUseCase(SignUpService, AccountRepository, session)
+    command = AccountCommandUseCase(AccountRepository, session)
     result = command.sign_up_user(mockup)
 
     assert result.id == ID

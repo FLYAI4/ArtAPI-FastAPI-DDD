@@ -4,7 +4,7 @@ import base64
 from src.shared_kernel.infra.database.connection import PostgreManager
 from src.account.infra.database.repository import AccountRepository
 from src.account.domain.entity import AccountInfo, UserInfo
-from src.account.domain.exception import DBError
+from src.shared_kernel.domain.exception import DBError
 
 # Mock data
 ID = "test@naver.com"

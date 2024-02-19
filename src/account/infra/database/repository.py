@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from src.account.adapter.database import AccountRepositoryInterface
 from src.account.domain.entity import AccountInfo, UserInfo
 from src.account.infra.database.model import Account
-from src.account.domain.exception import DBError
+from src.shared_kernel.domain.exception import DBError
 from src.account.domain.errorcode import RepositoryError
 
 
