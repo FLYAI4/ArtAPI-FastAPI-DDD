@@ -25,6 +25,7 @@ def test_user_can_insert_image_with_valid(client):
 
     with open(IMAGE_PATH, "rb") as f:
         files = {"file": ("image.jpg", f, "image/jpeg")}
+        # when : 이미지 저장 요청
         response = client.post(
             "/user/image",
             headers=headers,
@@ -35,3 +36,34 @@ def test_user_can_insert_image_with_valid(client):
     assert response.status_code == 200
     assert response.json()["meta"]["message"] == "ok"
     assert response.json()["data"]["generated_id"]
+
+
+def test_user_cannot_insert_image_with_non_header(client):
+    # given : 유효하지 않은 payload (header 없이 요청)
+
+    with open(IMAGE_PATH, "rb") as f:
+        files = {"file": ("image.jpg", f, "image/jpeg")}
+        # when : 이미지 저장 요청
+        response = client.post(
+            "/user/image",
+            files=files
+        )
+
+    # then : 422
+    assert response.status_code == 422
+    assert response.json()["meta"]["message"] == "A required value is missing. Please check."
+
+
+def test_user_cannot_insert_image_with_non_image(client):
+    # given : 유효하지 않은 payload (file 없이 요청)
+    headers = {"id": ID, "token": TOKEN}
+
+    # when : 이미지 저장 요청
+    response = client.post(
+            "/user/image",
+            headers=headers
+        )
+    
+    # given : 에러메시지
+    assert response.status_code == 422
+    assert response.json()["meta"]["message"] == "A required value is missing. Please check."
