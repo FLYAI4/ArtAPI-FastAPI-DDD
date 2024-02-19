@@ -8,7 +8,7 @@ from src.user.domain.util.local_file import (
 
 
 class InsertImageService:
-    def insert_image(self, origin_image: OriginImageInfo):
+    def insert_image(self, origin_image: OriginImageInfo) -> FileInfo:
         # set unique id
         user_unique_id = self.__generated_uniqnue_id(origin_image.id)
         origin_image.id = user_unique_id
@@ -26,7 +26,7 @@ class InsertImageService:
             ))
         with open(user_file_path, "wb") as f:
             f.write(origin_image.image_file)
-        return FileInfo(path=user_file_path)
+        return FileInfo(unique_id=user_unique_id, path=user_file_path)
 
     @staticmethod
     def __generated_uniqnue_id(user_id: str):

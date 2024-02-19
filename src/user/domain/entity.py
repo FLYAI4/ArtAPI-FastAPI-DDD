@@ -9,4 +9,5 @@ class OriginImageInfo:
 
 @dataclass
 class FileInfo:
+    unique_id: str
     path: str

@@ -19,4 +19,5 @@ def test_can_insert_image_with_valid():
         )
 
     result = UserCommandUseCase().insert_image(request)
+    assert result.unique_id.split("_")[-1] == ID.split("@")[0]
     assert os.path.isfile(result.path)
