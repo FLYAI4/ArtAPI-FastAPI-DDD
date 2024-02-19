@@ -63,12 +63,10 @@ class UserCommandUseCase:
                     tag=content.tag,
                     content=content.data
                 )
-                # audio content 로컬에 저장
+                # save audio content to local
                 await GeneratedContentService().save_audio_content_to_local(
                     generated_id_info, audio_content
                 )
-
-                # 생성 완료 응답 -> finish
 
         print(text_content.content)
         print(coord_content.content)

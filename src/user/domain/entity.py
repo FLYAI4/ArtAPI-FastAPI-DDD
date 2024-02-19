@@ -24,3 +24,11 @@ class GeneratedContent:
     generated_id: str
     tag: str
     content: bytes = None
+
+
+@dataclass
+class GeneratedContentModel:
+    id: str
+    generated_id: str
+    text_content: GeneratedContent
+    coord_content: GeneratedContent
