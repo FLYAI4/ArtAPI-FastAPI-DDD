@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package pb;
+
+message Request {
+    bytes image = 1;
+    string id = 2;
+}
+
+message Response {
+    string tag = 1;
+    bytes data = 2;
+}
+
+message VideoRequest {
+    string id = 1;
+}
+
+service StreamService {
+    // Focus point method
+    rpc GeneratedContentStream(Request) returns (stream Response) {}
+
+    // video content method
+    rpc VideoContentStream(VideoRequest) returns (stream Response) {}
+}
