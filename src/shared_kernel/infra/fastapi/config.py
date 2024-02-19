@@ -12,6 +12,7 @@ class EnvSettings(BaseSettings):
         )
     DB_NAME: ClassVar[str] = os.environ.get('DB_NAME')
     DEK_KEY: ClassVar[str] = os.environ.get('DEK_KEY')
+    TOKEN_KEY: ClassVar[str] = os.environ.get('TOKEN_KEY')
 
 
 settings = EnvSettings()
