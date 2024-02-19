@@ -7,15 +7,13 @@ from src.account.infra.database.repository import AccountRepository
 
 
 class LogInService:
-    def log_in_user(self, session: Session, user_info: UserInfo):
+    def log_in_user(self, session: Session, user_info: UserInfo) -> str:
         # Validate user's input data
         self.__check_user_id_existence(session, user_info.id)
-        self.__check_user_password(session, user_info)
-
         # Validate password collect.
-
+        self.__check_user_password(session, user_info)
         # Generate token
-        pass
+        return user_info.id
 
     @staticmethod
     def __check_user_id_existence(session: Session, user_id: str):

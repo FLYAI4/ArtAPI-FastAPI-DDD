@@ -15,3 +15,9 @@ class AccountInfo:
 class UserInfo:
     id: str
     password: str = ""
+
+
+@dataclass
+class TokenInfo:
+    id: str
+    token: str

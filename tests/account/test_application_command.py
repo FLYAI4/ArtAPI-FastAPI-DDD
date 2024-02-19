@@ -1,8 +1,7 @@
 import pytest
 from src.shared_kernel.infra.database.connection import PostgreManager
-from src.account.domain.service.sign_up import SignUpService
 from src.account.infra.database.repository import AccountRepository
-from src.account.adapter.rest.request import SignUpUserRequest
+from src.account.adapter.rest.request import SignUpUserRequest, LogInUserRequest
 from src.account.application.command import AccountCommandUseCase
 
 # Mock data
@@ -18,6 +17,7 @@ def session():
     yield PostgreManager.get_session()
 
 
+@pytest.mark.order(1)
 def test_can_sign_up_user(session):
     # given : 유효한 계정 정보
     mockup = SignUpUserRequest(
@@ -29,11 +29,27 @@ def test_can_sign_up_user(session):
     )
 
     # when : 회원 가입 요청
-    command = AccountCommandUseCase(SignUpService, AccountRepository, session)
+    command = AccountCommandUseCase(AccountRepository, session)
     result = command.sign_up_user(mockup)
 
     # then : 회원 가입 확인
     assert result.id == ID
+
+
+@pytest.mark.order(2)
+def test_can_log_in_user(session):
+    mockup = LogInUserRequest(
+        id=ID,
+        password=PASSWORD
+    )
+
+    # when : 로그인 요청
+    command = AccountCommandUseCase(AccountRepository, session)
+    result = command.log_in_user(mockup)
+
+    # then : 로그인 확인
+    assert result.id == ID
+    assert len(result.token) > 0
 
     # 계정 삭제
     result = AccountRepository.delete_user_account(session, result)
