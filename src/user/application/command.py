@@ -57,14 +57,25 @@ class UserCommandUseCase:
                     tag=content.tag,
                     content=content.data
                 )
+            if content.tag == "audio":
+                audio_content = GeneratedContent(
+                    generated_id=generated_id_info.generated_id,
+                    tag=content.tag,
+                    content=content.data
+                )
+                # audio content 로컬에 저장
+                await GeneratedContentService().save_audio_content_to_local(
+                    generated_id_info, audio_content
+                )
+
+                # 생성 완료 응답 -> finish
 
         print(text_content.content)
         print(coord_content.content)
-
-        # audio content 로컬에 저장
+        print(type(audio_content.content))
 
         # save mongodb -> text, coord DB 저장
 
         # save posgreSQL -> generated_id
 
-        # 생성 완료 응답 -> finish?
+        # 생성 완료 응답 -> finish

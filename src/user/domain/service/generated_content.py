@@ -32,6 +32,18 @@ class GeneratedContentService:
             if flag:
                 channel.close()
 
+    async def save_audio_content_to_local(
+            self, user_id_info: GeneratedIdInfo,
+            audio_content: GeneratedContent
+    ):
+        user_path = os.path.abspath(os.path.join(
+             find_storage_path(),
+             user_id_info.generated_id
+            ))
+        audio_file = os.path.abspath(os.path.join(user_path, "main.mp3"))
+        with open(audio_file, "wb") as f:
+            f.write(audio_content.content)
+
     @staticmethod
     def __find_user_origin_image(generated_id: str) -> str:
         storage_path = find_storage_path()
