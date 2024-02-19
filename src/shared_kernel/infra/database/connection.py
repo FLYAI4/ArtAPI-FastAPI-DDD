@@ -1,3 +1,4 @@
+import pymongo
 from sqlalchemy.orm import Session
 from sqlalchemy import create_engine
 from src.shared_kernel.adapter.database_abs import DBManager
@@ -14,3 +15,12 @@ class PostgreManager(DBManager):
             max_overflow=10
         )
         return Session(engin)
+
+
+class MongoManager(DBManager):
+    @staticmethod
+    def get_session():
+        session = pymongo.MongoClient(
+            settings.MONGO_CONNECTION_URL
+        )
+        return session[settings.DB_NAME]
