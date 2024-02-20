@@ -1,6 +1,7 @@
 import os
 import time
 import json
+import base64
 from fastapi import UploadFile
 from src.user.domain.entity import FileInfo
 
@@ -29,7 +30,7 @@ class UserCommandDemo:
             content = f.read()
             yield f"gif: {content}\n".encode()
         # 10초 대기 후 완료 메시지 전달
-        time.sleep(1)
+        time.sleep(10)
         yield f"finish: {generated_id}\n".encode()
 
     def demo_get_text_audio_content(self, generated_id: str):
@@ -40,7 +41,7 @@ class UserCommandDemo:
             audio_content = f.read()
             return {
                 "text_content": text_content,
-                "audio_content": audio_content
+                "audio_content": base64.b64encode(audio_content)
             }
 
     def demo_get_coord_content(self, generated_id: str):
@@ -53,5 +54,5 @@ class UserCommandDemo:
         with open(video_file, "rb") as f:
             video_content = f.read()
             return {
-                "video_content": video_content
+                "video_content": base64.b64encode(video_content)
             }
