@@ -10,3 +10,10 @@ class SignUpUserResponse(pydantic.BaseModel):
         return make_response(
             {"generated_id": self.file_info.unique_id}
         )
+
+
+class GetContentResponse(pydantic.BaseModel):
+    content: dict
+
+    def build(self):
+        return make_response(self.content)
