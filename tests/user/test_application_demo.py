@@ -11,6 +11,7 @@ ID = "demo@naver.com"
 IMAGE_PATH = os.path.abspath(os.path.join(test_img_path, "test.jpg"))
 GENERATED_ID = "demo"
 
+
 @pytest.fixture
 def command():
     yield UserCommandDemo()

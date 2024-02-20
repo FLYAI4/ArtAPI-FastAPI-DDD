@@ -102,3 +102,38 @@ async def test_generate_content(client):
 
         # async for chunk in response.aiter_bytes():
         #     print(chunk)
+
+
+def test_user_can_demo_insert_image_with_valid(client):
+    # given : 유효한 payload
+    headers = {"id": ID, "token": TOKEN}
+
+    with open(IMAGE_PATH, "rb") as f:
+        files = {"file": ("image.jpg", f, "image/jpeg")}
+        # when : 이미지 저장 요청
+        response = client.post(
+            "/user/image/demo",
+            headers=headers,
+            files=files
+        )
+
+    # then : 정상 응답 username
+    assert response.status_code == 200
+    assert response.json()["meta"]["message"] == "ok"
+    assert response.json()["data"]["generated_id"]
+
+
+@pytest.mark.asyncio
+async def test_demo_generate_content(client):
+    # given : 유효한 payload
+    headers = {"id": ID, "token": TOKEN, "generated_id": "demo"}
+
+    # when : 이미지 저장 요청
+    app = create_app()
+    async with httpx.AsyncClient(app=app, base_url="http://testserver") as ac_client:
+        response = await ac_client.post("/user/content/demo",
+                                        headers=headers)
+        assert response.status_code == 200
+
+        # async for chunk in response.aiter_bytes():
+        #     print(chunk)
