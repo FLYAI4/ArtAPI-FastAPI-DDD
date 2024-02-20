@@ -1,5 +1,7 @@
 import os
 import time
+from fastapi import UploadFile
+from src.user.domain.entity import FileInfo
 from src.user.adapter.rest.request import GeneratedContentRequest
 
 
@@ -10,6 +12,14 @@ class UserCommandDemo:
         domain_path = os.path.abspath(os.path.join(user_path, "domain"))
         self.demo_path = os.path.abspath(os.path.join(domain_path, "demo"))
 
+    def demo_insert_image(
+            self, id: str, file: UploadFile
+    ) -> FileInfo:
+        return FileInfo(
+            unique_id="1234_demo",
+            path="hello/world"
+        )
+
     async def demo_generate_content(
             self, id: str, requset: GeneratedContentRequest
     ):
@@ -19,7 +29,7 @@ class UserCommandDemo:
             content = f.read()
             yield f"gif: {content}\n".encode()
         # 10초 대기 후 완료 메시지 전달
-        time.sleep(10)
+        time.sleep(3)
         yield f"finish: {requset.generated_id}\n".encode()
 
     def get_demo_text_content():
