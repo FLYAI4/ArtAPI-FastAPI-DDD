@@ -13,6 +13,8 @@ exceptiongroup
 execnet
 fastapi
 greenlet
+grpcio
+grpcio-tools
 h11
 httpcore
 httpx
@@ -23,10 +25,12 @@ opencv-python-headless
 packaging
 pillow
 pluggy
+protobuf
 psycopg2-binary
 pycparser
 pycryptodome
 pydantic
+pydantic-settings
 pydantic_core
 PyJWT
 pymongo
