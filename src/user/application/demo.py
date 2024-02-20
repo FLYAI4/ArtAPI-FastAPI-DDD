@@ -1,7 +1,26 @@
-class DemoApiService:
-    def creat_demo_generated_content():
-        # gif demo content 추가(나무 사진으로)
-        pass
+import os
+import time
+from src.user.adapter.rest.request import GeneratedContentRequest
+
+
+class UserCommandDemo:
+    def __init__(self) -> None:
+        application_path = os.path.abspath(os.path.join(__file__, os.path.pardir))
+        user_path = os.path.abspath(os.path.join(application_path, os.path.pardir))
+        domain_path = os.path.abspath(os.path.join(user_path, "domain"))
+        self.demo_path = os.path.abspath(os.path.join(domain_path, "demo"))
+
+    async def demo_generate_content(
+            self, id: str, requset: GeneratedContentRequest
+    ):
+        # gif 파일은 바로 전달
+        gif_file = os.path.abspath(os.path.join(self.demo_path, "loading.gif"))
+        with open(gif_file, "rb") as f:
+            content = f.read()
+            yield f"gif: {content}\n".encode()
+        # 10초 대기 후 완료 메시지 전달
+        time.sleep(10)
+        yield f"finish: {requset.generated_id}\n".encode()
 
     def get_demo_text_content():
         # text_content, audio_content
