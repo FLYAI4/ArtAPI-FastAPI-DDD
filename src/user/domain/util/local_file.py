@@ -1,5 +1,5 @@
 import os
-
+import shutil
 
 def create_folder_if_not_exists(folder_path: str) -> str:
     """Create folder if not exists."""
@@ -20,9 +20,19 @@ def find_storage_path():
     return storage_path
 
 
-async def delete_file(file_path):
+async def delete_file(file_path: str):
     """Delete file if exists."""
     if os.path.exists(file_path):
         os.remove(file_path)
         return "Success delete file."
     return "There is no file."
+
+
+async def delete_folder(folder_path: str):
+    """Delete folder if exists"""
+    if os.path.exists(folder_path):
+        try:
+            shutil.rmtree(folder_path)
+        except Exception:
+            return "Fail to delete folder."
+    return "Success to delete folder."

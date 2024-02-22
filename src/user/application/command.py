@@ -24,7 +24,7 @@ class UserCommandUseCase:
         self.mogno_session = mongo_session
         self.postgre_session = postgre_session
 
-    def insert_image(
+    async def insert_image(
             self, id: str, file: UploadFile
     ) -> FileInfo:
         try:
@@ -35,7 +35,7 @@ class UserCommandUseCase:
             )
 
             # save local
-            return InsertImageService().insert_image(origin_image)
+            return await InsertImageService().insert_image(origin_image)
         except UserServiceError as e:
             raise e
         except Exception as e:

@@ -10,6 +10,7 @@ from PIL import Image
 from src.user.domain.exception import UserServiceError
 from src.user.domain.errorcode import InsertImageError
 from src.user.domain.entity import OriginImageInfo, FileInfo
+from src.user.domain.util.local_file import delete_folder
 from src.user.domain.util.local_file import (
     find_storage_path,
     create_folder_if_not_exists
@@ -22,7 +23,7 @@ class InsertImageService:
         self.height = 680
         self.threshold = 0.65
 
-    def insert_image(self, origin_image: OriginImageInfo) -> FileInfo:
+    async def insert_image(self, origin_image: OriginImageInfo) -> FileInfo:
         # set unique id
         user_unique_id = self.__generated_uniqnue_id(origin_image.id)
         origin_image.id = user_unique_id
@@ -48,7 +49,9 @@ class InsertImageService:
 
         # retrieval image
         similarity_image = self.__retrieval_image(user_file)
+        print("similarity : ", similarity_image)
         if not similarity_image:
+            await delete_folder(user_path)
             raise UserServiceError(**InsertImageError.NonRetrievalImage.value)
 
         return FileInfo(unique_id=user_unique_id, path=user_file)
@@ -83,7 +86,7 @@ class InsertImageService:
         # Return exception if lower than threshold
         max_similarity = max(similarities.values())[0][0]
         if max_similarity < self.threshold:
-            return ""
+            return None
         return max(similarities, key=similarities.get)
 
     def __load_model(self):
