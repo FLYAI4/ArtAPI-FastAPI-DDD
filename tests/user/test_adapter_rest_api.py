@@ -20,23 +20,23 @@ def client():
     yield TestClient(app)
 
 
-# def test_user_can_insert_image_with_valid(client):
-#     # given : 유효한 payload
-#     headers = {"id": ID, "token": TOKEN}
+def test_user_can_insert_image_with_valid(client):
+    # given : 유효한 payload
+    headers = {"id": ID, "token": TOKEN}
 
-#     with open(IMAGE_PATH, "rb") as f:
-#         files = {"file": ("image.jpg", f, "image/jpeg")}
-#         # when : 이미지 저장 요청
-#         response = client.post(
-#             "/user/image",
-#             headers=headers,
-#             files=files
-#         )
+    with open(IMAGE_PATH, "rb") as f:
+        files = {"file": ("image.jpg", f, "image/jpeg")}
+        # when : 이미지 저장 요청
+        response = client.post(
+            "/user/image",
+            headers=headers,
+            files=files
+        )
 
-#     # then : 정상 응답 username
-#     assert response.status_code == 200
-#     assert response.json()["meta"]["message"] == "ok"
-#     assert response.json()["data"]["generated_id"]
+    # then : 정상 응답 username
+    assert response.status_code == 200
+    assert response.json()["meta"]["message"] == "ok"
+    assert response.json()["data"]["generated_id"]
 
 
 # def test_user_cannot_insert_image_with_non_header(client):

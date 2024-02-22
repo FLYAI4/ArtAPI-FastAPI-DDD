@@ -22,7 +22,7 @@ async def test_can_generated_content_with_valid():
             image_file=f.read()
         )
 
-    result = InsertImageService().insert_image(origin_image)
+    result = await InsertImageService().insert_image(origin_image)
     assert result.unique_id.split("_")[-1] == ID.split("@")[0]
     assert os.path.isfile(result.path)
 

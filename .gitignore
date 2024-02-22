@@ -10,3 +10,5 @@ htmlcov
 storage
 *.mp4
 .vscode
+model
+resnet50_model.pth

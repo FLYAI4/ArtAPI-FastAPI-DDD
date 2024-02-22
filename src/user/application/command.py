@@ -11,6 +11,8 @@ from src.user.domain.service.insert_image import InsertImageService
 from src.user.domain.service.generated_content import GeneratedContentService
 from src.user.infra.database.repository import UserRepository
 from src.user.domain.entity import GeneratedContentModel
+from src.user.domain.exception import UserServiceError, UserApplicationError
+from src.user.domain.errorcode import InsertImageError
 
 
 class UserCommandUseCase:
@@ -22,17 +24,23 @@ class UserCommandUseCase:
         self.mogno_session = mongo_session
         self.postgre_session = postgre_session
 
-    def insert_image(
+    async def insert_image(
             self, id: str, file: UploadFile
     ) -> FileInfo:
-        # convert request to entity
-        origin_image = OriginImageInfo(
-            id=id,
-            image_file=file.file.read()
-        )
+        try:
+            # convert request to entity
+            origin_image = OriginImageInfo(
+                id=id,
+                image_file=file.file.read()
+            )
 
-        # save local
-        return InsertImageService().insert_image(origin_image)
+            # save local
+            return await InsertImageService().insert_image(origin_image)
+        except UserServiceError as e:
+            raise e
+        except Exception as e:
+            raise UserApplicationError(
+                **InsertImageError.UnknownError.value, err=e)
 
     async def generate_content(
             self, id: str, requset: GeneratedContentRequest

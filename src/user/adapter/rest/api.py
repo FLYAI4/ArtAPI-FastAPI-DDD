@@ -20,7 +20,7 @@ async def insert_image(
     file: UploadFile = File(...),
 ):
     command = UserCommandUseCase()
-    result = command.insert_image(id, file)
+    result = await command.insert_image(id, file)
     return SignUpUserResponse(file_info=result).build()
 
 
