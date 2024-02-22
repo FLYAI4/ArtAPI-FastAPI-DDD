@@ -21,7 +21,7 @@ class InsertImageService:
     def __init__(self) -> None:
         self.width = 510
         self.height = 680
-        self.threshold = 0.65
+        self.threshold = 0.7
 
     async def insert_image(self, origin_image: OriginImageInfo) -> FileInfo:
         # set unique id
@@ -49,7 +49,6 @@ class InsertImageService:
 
         # retrieval image
         similarity_image = self.__retrieval_image(user_file)
-        print("similarity : ", similarity_image)
         if not similarity_image:
             await delete_folder(user_path)
             raise UserServiceError(**InsertImageError.NonRetrievalImage.value)
@@ -85,6 +84,7 @@ class InsertImageService:
 
         # Return exception if lower than threshold
         max_similarity = max(similarities.values())[0][0]
+        print("similarity : ", max_similarity)
         if max_similarity < self.threshold:
             return None
         return max(similarities, key=similarities.get)
