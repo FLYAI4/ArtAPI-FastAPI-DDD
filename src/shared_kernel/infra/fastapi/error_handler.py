@@ -22,7 +22,7 @@ def error_handlers(app) -> JSONResponse:
             status_code=exc.code,
             content=content
         )
-    
+
     @app.exception_handler(RequestValidationError)
     async def validation_exception_handler(
         request: Request,

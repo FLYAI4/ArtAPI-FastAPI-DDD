@@ -1,5 +1,7 @@
 import os
+import pytest
 from PIL import Image
+from src.user.domain.exception import UserServiceError
 from src.user.domain.entity import OriginImageInfo
 from src.user.domain.service.insert_image import InsertImageService
 
@@ -26,3 +28,15 @@ def test_can_insert_image_with_valid():
     image_width, image_height = image.size
     assert image_width == 510
     assert image_height == 680
+
+
+def test_can_insert_image_with_valid():
+    wrong_image_path = os.path.abspath(os.path.join(test_img_path, "wrong.jpg"))
+    with open(wrong_image_path, "rb") as f:
+        origin_image = OriginImageInfo(
+            id=ID,
+            image_file=f.read()
+        )
+
+    with pytest.raises(UserServiceError):
+        InsertImageService().insert_image(origin_image)
