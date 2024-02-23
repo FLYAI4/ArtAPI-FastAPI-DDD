@@ -1,5 +1,6 @@
 import os
 import grpc
+import time
 from src.user.adapter.grpc import stream_pb2, stream_pb2_grpc
 from src.user.domain.entity import GeneratedIdInfo, GeneratedContent
 from src.user.domain.util.local_file import find_storage_path
@@ -28,6 +29,8 @@ class GeneratedContentService:
             for response in responses:
                 if response.tag == "finish":
                     flag = True
+                    # TODO : 전송 다 되기 전에 gRPC 닫히는 오류 발생할 수 있음
+                    time.sleep(1)
                     break
                 yield response
             if flag:

@@ -100,7 +100,7 @@ class UserCommandUseCase:
             self.mogno_session, generated_content
             )
 
-        # TODO : status 변경하는 것으로 코드 수정
+        # change user content status
         generated_id_info = UserRepository.update_user_content_status(
             self.postgre_session, generated_id_info
             )

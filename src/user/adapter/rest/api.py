@@ -9,6 +9,7 @@ from src.shared_kernel.infra.database.connection import (
     MongoManager,
     PostgreManager
 )
+from src.shared_kernel.infra.fastapi.auth import get_current_user
 
 user = APIRouter(prefix="/user")
 
@@ -16,9 +17,9 @@ user = APIRouter(prefix="/user")
 @user.post('/image')
 async def insert_image(
     id: str = Header(),
-    token: str = Header(),
     file: UploadFile = File(...),
-    postgre_session: Session = Depends(PostgreManager.get_session)
+    postgre_session: Session = Depends(PostgreManager.get_session),
+    auth: str = Depends(get_current_user)
 ):
     command = UserCommandUseCase(postgre_session=postgre_session)
     result = await command.insert_image(id, file)
@@ -29,9 +30,9 @@ async def insert_image(
 async def generate_content(
     request: GeneratedContentRequest,
     id: str = Header(),
-    token: str = Header(),
     mogno_session: any = Depends(MongoManager.get_session),
-    postgre_session: Session = Depends(PostgreManager.get_session)
+    postgre_session: Session = Depends(PostgreManager.get_session),
+    auth: str = Depends(get_current_user)
 ):
     command = UserCommandUseCase(mogno_session, postgre_session)
     return StreamingResponse(command.generate_content(id, request),
