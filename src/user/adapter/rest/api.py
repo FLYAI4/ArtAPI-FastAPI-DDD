@@ -18,8 +18,9 @@ async def insert_image(
     id: str = Header(),
     token: str = Header(),
     file: UploadFile = File(...),
+    postgre_session: Session = Depends(PostgreManager.get_session)
 ):
-    command = UserCommandUseCase()
+    command = UserCommandUseCase(postgre_session=postgre_session)
     result = await command.insert_image(id, file)
     return SignUpUserResponse(file_info=result).build()
 

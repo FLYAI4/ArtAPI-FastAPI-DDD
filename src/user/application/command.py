@@ -4,13 +4,13 @@ from src.user.domain.entity import (
     FileInfo,
     OriginImageInfo,
     GeneratedIdInfo,
-    GeneratedContent
+    GeneratedContent,
+    GeneratedContentModel
     )
 from src.user.adapter.rest.request import GeneratedContentRequest
 from src.user.domain.service.insert_image import InsertImageService
 from src.user.domain.service.generated_content import GeneratedContentService
 from src.user.infra.database.repository import UserRepository
-from src.user.domain.entity import GeneratedContentModel
 from src.user.domain.exception import UserServiceError, UserApplicationError
 from src.user.domain.errorcode import InsertImageError
 
@@ -35,7 +35,16 @@ class UserCommandUseCase:
             )
 
             # save local
-            return await InsertImageService().insert_image(origin_image)
+            file_info = await InsertImageService().insert_image(origin_image)
+
+            # save posgreSQL -> generated_id
+            generated_id_info = GeneratedIdInfo(
+                id=id,
+                generated_id=file_info.unique_id
+            )
+            UserRepository.insert_generated_id(
+                self.postgre_session, generated_id_info)
+            return file_info
         except UserServiceError as e:
             raise e
         except Exception as e:
@@ -91,10 +100,10 @@ class UserCommandUseCase:
             self.mogno_session, generated_content
             )
 
-        # save posgreSQL -> generated_id
-        generated_id_info = UserRepository.insert_generated_id(
-            self.postgre_session, generated_id_info
-            )
+        # TODO : status 변경하는 것으로 코드 수정
+        # generated_id_info = UserRepository.insert_generated_id(
+        #     self.postgre_session, generated_id_info
+        #     )
 
         # 생성 완료 응답 -> finish
         yield f"finish: {generated_id_info.id}\n".encode()
