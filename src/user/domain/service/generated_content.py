@@ -15,7 +15,8 @@ class GeneratedContentService:
         # create generate content
         # gif, text content, coord content, tts
         options = [('grpc.max_receive_message_length', 50 * 1024 * 1024)]
-        with grpc.insecure_channel('localhost:50051', options=options) as channel:
+        with grpc.insecure_channel('localhost:50051',
+                                   options=options) as channel:
             stub = stream_pb2_grpc.StreamServiceStub(channel)
             with open(origin_file, "rb") as f:
                 request = stream_pb2.Request(
@@ -48,5 +49,6 @@ class GeneratedContentService:
     def __find_user_origin_image(generated_id: str) -> str:
         storage_path = find_storage_path()
         user_path = os.path.abspath(os.path.join(storage_path, generated_id))
-        origin_file = os.path.abspath(os.path.join(user_path, "origin_img.jpg"))
+        origin_file = os.path.abspath(os.path.join(
+            user_path, "origin_img.jpg"))
         return origin_file

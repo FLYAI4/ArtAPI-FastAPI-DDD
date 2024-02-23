@@ -20,6 +20,13 @@ class GeneratedIdInfo:
 
 
 @dataclass
+class UserContent:
+    id: str
+    generated_id: str
+    status: bool
+
+
+@dataclass
 class GeneratedContent:
     generated_id: str
     tag: str

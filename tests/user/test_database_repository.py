@@ -58,3 +58,32 @@ def test_can_insert_generated_id(postgre_session):
     # 데이터 삭제
     result = UserRepository.delete_generated_id(postgre_session, generated_info)
     assert result.id == ID
+
+
+def test_can_update_user_content_status(postgre_session):
+    # given : 유효한 계정
+    generated_id = timestamp + "_" + ID
+    generated_info = GeneratedIdInfo(
+        id=ID,
+        generated_id=generated_id
+    )
+
+    result = UserRepository.insert_generated_id(postgre_session, generated_info)
+    assert result.id == ID
+    assert result.generated_id == generated_id
+
+    result = UserRepository.get_user_content(postgre_session, generated_info)
+    assert not result.status
+
+    # when : user content 상태 변경
+    result = UserRepository.update_user_content_status(postgre_session, generated_info)
+    assert result.id == ID
+    assert result.generated_id == generated_id
+
+    # then : 상태 변경
+    result = UserRepository.get_user_content(postgre_session, generated_info)
+    assert result.status
+
+    # 데이터 삭제
+    result = UserRepository.delete_generated_id(postgre_session, generated_info)
+    assert result.id == ID
