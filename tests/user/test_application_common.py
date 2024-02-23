@@ -4,6 +4,8 @@ import time
 from fastapi import UploadFile
 from src.user.application.command import UserCommandUseCase
 from src.user.domain.exception import UserServiceError
+from src.user.infra.database.repository import UserRepository
+from src.user.domain.entity import GeneratedIdInfo
 from src.user.adapter.rest.request import GeneratedContentRequest
 from src.shared_kernel.infra.database.connection import (
     MongoManager,
@@ -35,6 +37,15 @@ async def test_can_insert_image_with_valid(command):
     assert result.unique_id.split("_")[-1] == ID.split("@")[0]
     assert os.path.isfile(result.path)
 
+    generated_id_info = GeneratedIdInfo(
+            id=ID,
+            generated_id=result.unique_id
+        )
+    result = UserRepository.delete_generated_id(
+        PostgreManager.get_session(), generated_id_info
+    )
+    assert result.id == ID
+
 
 @pytest.mark.asyncio
 async def test_cannot_insert_image_with_no_match_image(command):
@@ -45,19 +56,34 @@ async def test_cannot_insert_image_with_no_match_image(command):
             file = UploadFile(file=f)
             await command.insert_image(ID, file)
 
-# @pytest.mark.asyncio
-# async def test_can_generate_content_with_valid(command):
-#     with open(IMAGE_PATH, "rb") as f:
-#         file = UploadFile(file=f)
-#         result = command.insert_image(ID, file)
 
-#     assert os.path.isfile(result.path)
+@pytest.mark.asyncio
+async def test_can_generate_content_with_valid(command):
+    with open(IMAGE_PATH, "rb") as f:
+        file = UploadFile(file=f)
+        result = await command.insert_image(ID, file)
 
-#     # given : 유효한 payload
-#     mockup = GeneratedContentRequest(
-#         generated_id=result.unique_id
-#     )
+    assert os.path.isfile(result.path)
 
-#     # when : 콘텐츠 생성 요청
-#     async for chunk in command.generate_content(ID, mockup):
-#         assert chunk.decode().split(":")[0] in ["gif", "finish"]
+    # given : 유효한 payload
+    mockup = GeneratedContentRequest(
+        generated_id=result.unique_id
+    )
+
+    # when : 콘텐츠 생성 요청
+    async for chunk in command.generate_content(ID, mockup):
+        assert chunk.decode().split(":")[0] in ["gif", "finish"]
+
+    generated_id_info = GeneratedIdInfo(
+            id=ID,
+            generated_id=result.unique_id
+        )
+    result = UserRepository.get_user_content(
+        PostgreManager.get_session(), generated_id_info)
+    assert result.status
+
+    # 삭제
+    result = UserRepository.delete_generated_id(
+        PostgreManager.get_session(), generated_id_info
+    )
+    assert result.id == ID

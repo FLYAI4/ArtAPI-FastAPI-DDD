@@ -101,9 +101,9 @@ class UserCommandUseCase:
             )
 
         # TODO : status 변경하는 것으로 코드 수정
-        # generated_id_info = UserRepository.insert_generated_id(
-        #     self.postgre_session, generated_id_info
-        #     )
+        generated_id_info = UserRepository.update_user_content_status(
+            self.postgre_session, generated_id_info
+            )
 
         # 생성 완료 응답 -> finish
         yield f"finish: {generated_id_info.id}\n".encode()
