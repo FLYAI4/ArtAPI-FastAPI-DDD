@@ -12,3 +12,9 @@ class GeneratedContent:
 @dataclass
 class GeneratedContentName:
     image_name: str
+
+
+@dataclass
+class OriginImageInfo:
+    image_name: str
+    image_file: bytes
