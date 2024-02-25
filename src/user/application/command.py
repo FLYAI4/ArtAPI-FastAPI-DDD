@@ -5,7 +5,8 @@ from src.user.domain.entity import (
     OriginImageInfo,
     MainContent,
     ContentName,
-    CoordContent
+    CoordContent,
+    VideoContent
     )
 from src.shared_kernel.domain.exception import DBError
 from src.user.domain.service.insert_image import InsertImageService
@@ -83,6 +84,24 @@ class UserCommandUseCase:
             )
             return CoordContent(
                 coord_content=coord_content.data.decode()
+            )
+        except DBError as e:
+            raise e
+        except Exception as e:
+            raise UserApplicationError(
+                **GetContentError.UnknownError.value, err=e)
+
+    async def get_video_content(
+            self, generated_id: str
+    ) -> VideoContent:
+        try:
+            # load content
+            content_name = ContentName(image_name=generated_id)
+            video_content = UserRepository.get_video_content(
+                self.azure_blob_session, content_name
+            )
+            return VideoContent(
+                video_content=video_content.data
             )
         except DBError as e:
             raise e

@@ -64,3 +64,10 @@ async def test_can_get_coord_content_with_valid(command):
     assert result.coord_content
     json_data = json.loads(result.coord_content)
     print(json_data)
+
+
+@pytest.mark.asyncio
+async def test_can_get_video_content_with_valid(command):
+    result = await command.get_video_content(GENERATED_ID)
+
+    assert result.video_content

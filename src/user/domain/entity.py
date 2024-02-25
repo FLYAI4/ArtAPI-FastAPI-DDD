@@ -47,3 +47,8 @@ class MainContent:
 @dataclass
 class CoordContent:
     coord_content: str
+
+
+@dataclass
+class VideoContent:
+    video_content: str
