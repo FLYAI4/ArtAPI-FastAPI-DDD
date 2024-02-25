@@ -5,12 +5,12 @@ from src.admin.domain.entity import GeneratedContent, GeneratedContentName
 class AdminRepositoryInterface(ABC):
     @abstractmethod
     def insert_content(
-        postgre_session, generated_content: GeneratedContent
+        azure_blob_session, generated_content: GeneratedContent
     ) -> GeneratedContentName:
         pass
 
     @abstractmethod
     def delete_content(
-        postgre_session, generated_content_name: GeneratedContentName
+        azure_blob_session, generated_content_name: GeneratedContentName
     ) -> GeneratedContentName:
         pass
