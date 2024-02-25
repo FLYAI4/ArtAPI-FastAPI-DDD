@@ -4,9 +4,9 @@ from dataclasses import dataclass
 @dataclass
 class GeneratedContent:
     image_name: str
-    origin_image: bytes
-    audio_content: bytes
-    video_content: bytes
+    origin_image: bytes = None
+    audio_content: bytes = None
+    video_content: bytes = None
 
 
 @dataclass

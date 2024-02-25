@@ -1,6 +1,7 @@
 import os
 import io
 import grpc
+import time
 from src.admin.domain.util import find_storage_path
 from src.user.adapter.grpc import stream_pb2, stream_pb2_grpc
 from src.admin.domain.entity import OriginImageInfo
@@ -22,15 +23,6 @@ class GeneratedContentService:
         # file path
         storage_path = find_storage_path()
         resize_image = os.path.abspath(os.path.join(storage_path, origin_image_info.image_name))
-        if os.path.exists(resize_image):
-            raise AdminServiceError(**GeneratedContentsError.AlreadyExistenceImage.value)
-
-        # resize image
-        self.__resize_image(
-            origin_image_info.image_file,
-            resize_image,
-            self.width, self.height
-        )
 
         # created generated content
         # gif, text content, coord content, tts
@@ -47,6 +39,7 @@ class GeneratedContentService:
             for response in responses:
                 if response.tag == "finish":
                     flag = True
+                    time.sleep(1)
                     break
                 yield response
             if flag:
@@ -63,13 +56,20 @@ class GeneratedContentService:
             os.remove(resize_image)
         return origin_image_info
 
-    @staticmethod
-    def __resize_image(
-        image_bytes: bytes,
-        user_file: str,
-        width: int, height: int
+    def resize_image(
+        self,
+        origin_image_info: OriginImageInfo,
     ):
-        image = Image.open(io.BytesIO(image_bytes))
+        # file path
+        storage_path = find_storage_path()
+        resize_image = os.path.abspath(os.path.join(storage_path, origin_image_info.image_name))
+
+        if os.path.exists(resize_image):
+            raise AdminServiceError(**GeneratedContentsError.AlreadyExistenceImage.value)
+
+        image = Image.open(io.BytesIO(origin_image_info.image_file))
         image = image.convert("RGB")
-        resized_image = image.resize((width, height))
-        resized_image.save(user_file)
+        resized_image = image.resize((self.width, self.height))
+        resized_image.save(resize_image)
+
+        return resize_image
