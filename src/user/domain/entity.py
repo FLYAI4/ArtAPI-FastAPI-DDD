@@ -10,25 +10,45 @@ class OriginImageInfo:
 @dataclass
 class FileInfo:
     unique_id: str
-    path: str
+    image_name: str
 
 
 @dataclass
-class GeneratedIdInfo:
+class UserReview:
     id: str
-    generated_id: str
+    image_name: str
+    like_status: bool
+    review_content: str
 
 
 @dataclass
-class GeneratedContent:
-    generated_id: str
+class UserId:
+    id: str
+
+
+@dataclass
+class ContentName:
+    image_name: str
+
+
+@dataclass
+class ContentInfo:
     tag: str
-    content: bytes = None
+    data: bytes = None
 
 
 @dataclass
-class GeneratedContentModel:
-    id: str
-    generated_id: str
-    text_content: bytes
-    coord_content: bytes
+class MainContent:
+    resize_image: bytes
+    text_content: str
+    audio_content: bytes
+
+
+@dataclass
+class CoordContent:
+    coord_content: str
+
+
+@dataclass
+class VideoContent:
+    video_content: str

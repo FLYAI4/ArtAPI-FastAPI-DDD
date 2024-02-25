@@ -13,3 +13,11 @@ class InsertImageError(Enum):
         "message": "Please contact administrator.",
         "log": "Insert image unknown error. Please check the server."
     }
+
+
+class GetContentError(Enum):
+    UnknownError = {
+        "code": status.HTTP_500_INTERNAL_SERVER_ERROR,
+        "message": "Please contact administrator.",
+        "log": "Get content unknown error. Please check the server."
+    }

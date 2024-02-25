@@ -1,14 +1,17 @@
 import os
 import pytest
 import time
+import json
 from fastapi import UploadFile
 from src.user.application.command import UserCommandUseCase
 from src.user.domain.exception import UserServiceError
-from src.user.adapter.rest.request import GeneratedContentRequest
 from src.shared_kernel.infra.database.connection import (
     MongoManager,
-    PostgreManager
+    PostgreManager,
+    BlobStorageManager
 )
+from src.user.adapter.rest.request import InsertUserContentReview
+
 
 user_path = os.path.abspath(os.path.join(__file__, os.path.pardir))
 test_img_path = os.path.abspath(os.path.join(user_path, "test_img"))
@@ -16,13 +19,15 @@ test_img_path = os.path.abspath(os.path.join(user_path, "test_img"))
 # Mock data
 ID = "userservice1@naver.com"
 IMAGE_PATH = os.path.abspath(os.path.join(test_img_path, "test.jpg"))
+GENERATED_ID = "4.jpg"
 
 
 @pytest.fixture
 def command():
     yield UserCommandUseCase(
         MongoManager.get_session(),
-        PostgreManager.get_session()
+        PostgreManager.get_session(),
+        BlobStorageManager.get_session()
         )
 
 
@@ -32,8 +37,7 @@ async def test_can_insert_image_with_valid(command):
         file = UploadFile(file=f)
         result = await command.insert_image(ID, file)
 
-    assert result.unique_id.split("_")[-1] == ID.split("@")[0]
-    assert os.path.isfile(result.path)
+    assert result.image_name == "4.jpg"
 
 
 @pytest.mark.asyncio
@@ -45,19 +49,43 @@ async def test_cannot_insert_image_with_no_match_image(command):
             file = UploadFile(file=f)
             await command.insert_image(ID, file)
 
-# @pytest.mark.asyncio
-# async def test_can_generate_content_with_valid(command):
-#     with open(IMAGE_PATH, "rb") as f:
-#         file = UploadFile(file=f)
-#         result = command.insert_image(ID, file)
 
-#     assert os.path.isfile(result.path)
+@pytest.mark.asyncio
+async def test_can_get_main_content_with_valid(command):
+    result = await command.get_main_content(GENERATED_ID)
 
-#     # given : 유효한 payload
-#     mockup = GeneratedContentRequest(
-#         generated_id=result.unique_id
-#     )
+    assert result.resize_image
+    assert result.audio_content
+    print(result.text_content)
 
-#     # when : 콘텐츠 생성 요청
-#     async for chunk in command.generate_content(ID, mockup):
-#         assert chunk.decode().split(":")[0] in ["gif", "finish"]
+
+@pytest.mark.asyncio
+async def test_can_get_coord_content_with_valid(command):
+    result = await command.get_coord_content(GENERATED_ID)
+
+    assert result.coord_content
+    json_data = json.loads(result.coord_content)
+    print(json_data)
+
+
+@pytest.mark.asyncio
+async def test_can_get_video_content_with_valid(command):
+    result = await command.get_video_content(GENERATED_ID)
+
+    assert result.video_content
+
+
+@pytest.mark.asyncio
+async def test_can_insert_user_content_review_with_valid(command):
+    mockup = InsertUserContentReview(
+        like_status=True,
+        review_content="hello review"
+    )
+
+    result = await command.insert_user_content_review(
+        id=ID,
+        generated_id=GENERATED_ID,
+        request=mockup
+    )
+
+    assert result.id == ID

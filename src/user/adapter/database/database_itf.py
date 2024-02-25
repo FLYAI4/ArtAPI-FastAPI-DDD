@@ -1,16 +1,51 @@
 from abc import ABC, abstractmethod
-from src.user.domain.entity import GeneratedContentModel, GeneratedIdInfo
+from src.user.domain.entity import (
+    UserReview,
+    UserId,
+    ContentName,
+    ContentInfo
+)
 
 
 class UserRepositoryInterface(ABC):
     @abstractmethod
-    def insert_content(
-        mongo_session, generated_content: GeneratedContentModel
-    ) -> GeneratedIdInfo:
+    def insert_user_review(
+        postgre_session, user_review: UserReview
+    ) -> UserId:
         pass
 
     @abstractmethod
-    def insert_generated_id(
-        postgre_session, genereted_id_info: GeneratedIdInfo
-    ) -> GeneratedIdInfo:
+    def delete_user_review(
+        postgre_session, user_review: UserReview
+    ) -> UserId:
+        pass
+
+    @abstractmethod
+    def get_text_content(
+        mongo_session, content_name: ContentName
+    ) -> ContentInfo:
+        pass
+
+    @abstractmethod
+    def get_coord_content(
+        mongo_session, content_name: ContentName
+    ) -> ContentInfo:
+        pass
+
+    @abstractmethod
+    def get_origin_image(
+        azure_blob_session, content_name: ContentName
+    ) -> ContentInfo:
+        pass
+
+    @abstractmethod
+    def get_audio_content(
+        azure_blob_session, content_name: ContentName
+    ) -> ContentInfo:
+        pass
+
+    @abstractmethod
+    def get_video_content(
+        azure_blob_session, content_name: ContentName
+    ) -> ContentInfo:
         pass
