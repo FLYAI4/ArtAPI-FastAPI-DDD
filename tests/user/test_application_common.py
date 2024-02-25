@@ -10,6 +10,8 @@ from src.shared_kernel.infra.database.connection import (
     PostgreManager,
     BlobStorageManager
 )
+from src.user.adapter.rest.request import InsertUserContentReview
+
 
 user_path = os.path.abspath(os.path.join(__file__, os.path.pardir))
 test_img_path = os.path.abspath(os.path.join(user_path, "test_img"))
@@ -71,3 +73,19 @@ async def test_can_get_video_content_with_valid(command):
     result = await command.get_video_content(GENERATED_ID)
 
     assert result.video_content
+
+
+@pytest.mark.asyncio
+async def test_can_insert_user_content_review_with_valid(command):
+    mockup = InsertUserContentReview(
+        like_satus=True,
+        review_content="hello review"
+    )
+
+    result = await command.insert_user_content_review(
+        id=ID,
+        generated_id=GENERATED_ID,
+        request=mockup
+    )
+
+    assert result.id == ID

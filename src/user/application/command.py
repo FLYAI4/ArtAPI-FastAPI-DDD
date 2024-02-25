@@ -6,14 +6,16 @@ from src.user.domain.entity import (
     MainContent,
     ContentName,
     CoordContent,
-    VideoContent
+    VideoContent,
+    UserId,
+    UserReview
     )
 from src.shared_kernel.domain.exception import DBError
 from src.user.domain.service.insert_image import InsertImageService
 from src.user.infra.database.repository import UserRepository
 from src.user.domain.exception import UserServiceError, UserApplicationError
 from src.user.domain.errorcode import InsertImageError, GetContentError
-
+from src.user.adapter.rest.request import InsertUserContentReview
 
 class UserCommandUseCase:
     def __init__(
@@ -102,6 +104,29 @@ class UserCommandUseCase:
             )
             return VideoContent(
                 video_content=video_content.data
+            )
+        except DBError as e:
+            raise e
+        except Exception as e:
+            raise UserApplicationError(
+                **GetContentError.UnknownError.value, err=e)
+
+    async def insert_user_content_review(
+            self,
+            id: str,
+            generated_id: str,
+            request: InsertUserContentReview
+    ) -> UserId:
+        try:
+            user_review = UserReview(
+                id=id,
+                image_name=generated_id,
+                like_status=request.like_satus,
+                review_content=request.review_content
+            )
+            return UserRepository.insert_user_review(
+                self.postgre_session,
+                user_review
             )
         except DBError as e:
             raise e

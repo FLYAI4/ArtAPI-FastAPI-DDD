@@ -1,5 +1,6 @@
 import pydantic
 
 
-class GeneratedContentRequest(pydantic.BaseModel):
-    generated_id: str
+class InsertUserContentReview(pydantic.BaseModel):
+    like_satus: bool
+    review_content: str

@@ -4,7 +4,6 @@ from fastapi import APIRouter, UploadFile, File, Header, Depends
 from src.user.application.command import UserCommandUseCase
 from src.user.application.demo import UserCommandDemo
 from src.user.adapter.rest.response import SignUpUserResponse, GetContentResponse
-from src.user.adapter.rest.request import GeneratedContentRequest
 from src.shared_kernel.infra.database.connection import (
     MongoManager,
     PostgreManager
@@ -25,18 +24,6 @@ async def insert_image(
     result = await command.insert_image(id, file)
     return SignUpUserResponse(file_info=result).build()
 
-
-@user.post('/content')
-async def generate_content(
-    request: GeneratedContentRequest,
-    id: str = Header(),
-    mogno_session: any = Depends(MongoManager.get_session),
-    postgre_session: Session = Depends(PostgreManager.get_session),
-    auth: str = Depends(get_current_user)
-):
-    command = UserCommandUseCase(mogno_session, postgre_session)
-    return StreamingResponse(command.generate_content(id, request),
-                             media_type="text/event-stream")
 
 
 @user.post('/image/demo')
