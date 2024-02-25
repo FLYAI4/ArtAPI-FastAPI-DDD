@@ -53,7 +53,7 @@ class InsertImageService:
             await delete_folder(user_path)
             raise UserServiceError(**InsertImageError.NonRetrievalImage.value)
 
-        return FileInfo(unique_id=user_unique_id, path=user_file)
+        return FileInfo(unique_id=user_unique_id, image_name=similarity_image)
 
     @staticmethod
     def __generated_uniqnue_id(user_id: str):

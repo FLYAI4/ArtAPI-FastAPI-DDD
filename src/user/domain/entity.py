@@ -10,7 +10,7 @@ class OriginImageInfo:
 @dataclass
 class FileInfo:
     unique_id: str
-    path: str
+    image_name: str
 
 
 @dataclass
@@ -35,3 +35,10 @@ class ContentName:
 class ContentInfo:
     tag: str
     data: bytes = None
+
+
+@dataclass
+class MainContent:
+    resize_image: bytes
+    text_content: str
+    audio_content: bytes
