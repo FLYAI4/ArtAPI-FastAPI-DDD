@@ -3,8 +3,9 @@ from sqlalchemy.orm import Session
 from src.user.domain.entity import (
     FileInfo,
     OriginImageInfo,
-    MainContent, 
-    ContentName
+    MainContent,
+    ContentName,
+    CoordContent
     )
 from src.shared_kernel.domain.exception import DBError
 from src.user.domain.service.insert_image import InsertImageService
@@ -64,6 +65,24 @@ class UserCommandUseCase:
                 resize_image=image_content.data,
                 text_content=text_content.data.decode(),
                 audio_content=audio_content.data
+            )
+        except DBError as e:
+            raise e
+        except Exception as e:
+            raise UserApplicationError(
+                **GetContentError.UnknownError.value, err=e)
+
+    async def get_coord_content(
+            self, generated_id: str
+    ) -> CoordContent:
+        try:
+            # load content
+            content_name = ContentName(image_name=generated_id)
+            coord_content = UserRepository.get_coord_content(
+                self.mogno_session, content_name
+            )
+            return CoordContent(
+                coord_content=coord_content.data.decode()
             )
         except DBError as e:
             raise e

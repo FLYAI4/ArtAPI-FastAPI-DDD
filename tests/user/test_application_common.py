@@ -1,6 +1,7 @@
 import os
 import pytest
 import time
+import json
 from fastapi import UploadFile
 from src.user.application.command import UserCommandUseCase
 from src.user.domain.exception import UserServiceError
@@ -54,3 +55,12 @@ async def test_can_get_main_content_with_valid(command):
     assert result.resize_image
     assert result.audio_content
     print(result.text_content)
+
+
+@pytest.mark.asyncio
+async def test_can_get_coord_content_with_valid(command):
+    result = await command.get_coord_content(GENERATED_ID)
+
+    assert result.coord_content
+    json_data = json.loads(result.coord_content)
+    print(json_data)

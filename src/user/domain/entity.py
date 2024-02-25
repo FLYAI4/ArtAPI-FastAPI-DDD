@@ -42,3 +42,8 @@ class MainContent:
     resize_image: bytes
     text_content: str
     audio_content: bytes
+
+
+@dataclass
+class CoordContent:
+    coord_content: str
