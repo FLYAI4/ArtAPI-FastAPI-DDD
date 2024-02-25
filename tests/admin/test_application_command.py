@@ -2,7 +2,8 @@ import os
 import pytest
 from fastapi import UploadFile
 from src.admin.application.command import AdminCommandUseCase
-from src.shared_kernel.infra.database.connection import BlobStorageManager
+from src.admin.infra.database.repository import AdminRepository
+from src.shared_kernel.infra.database.connection import BlobStorageManager, MongoManager
 
 user_path = os.path.abspath(os.path.join(__file__, os.path.pardir))
 test_img_path = os.path.abspath(os.path.join(user_path, "test_img"))
@@ -14,6 +15,7 @@ IMAGE_NAME = "test.jpg"
 @pytest.fixture
 def command():
     yield AdminCommandUseCase(
+        MongoManager.get_session(),
         BlobStorageManager.get_session()
     )
 
@@ -27,3 +29,7 @@ async def test_can_generated_content_with_valid(command):
         result = await command.generate_content(IMAGE_NAME, file)
 
     assert result.image_name == IMAGE_NAME
+
+    # 삭제
+    mongo_session = MongoManager.get_session()
+    AdminRepository.delete_text_content(mongo_session, result)

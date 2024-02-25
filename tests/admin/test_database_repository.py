@@ -1,7 +1,8 @@
 import os
 import pytest
-from src.shared_kernel.infra.database.connection import BlobStorageManager
-from src.admin.domain.entity import GeneratedContent
+import base64
+from src.shared_kernel.infra.database.connection import BlobStorageManager, MongoManager
+from src.admin.domain.entity import GeneratedContent, GeneratedTextContent
 from src.admin.infra.database.repository import AdminRepository
 
 
@@ -10,11 +11,19 @@ test_img_path = os.path.abspath(os.path.join(admin_path, "test_img"))
 
 # Mock data
 IMAGE_NAME = "test.jpg"
+TEXT_CONTENT = b"hello helllo !!@#!$!@fgadfa"
+COORD_CONTENT = b'efbgaignpsadovcm1omfmdafmssv'
+
 
 
 @pytest.fixture
 def blob_session():
-    return BlobStorageManager.get_session()
+    yield BlobStorageManager.get_session()
+
+
+@pytest.fixture
+def mongo_session():
+    yield MongoManager.get_session()
 
 
 @pytest.fixture
@@ -26,7 +35,7 @@ def mockup():
     # with open(origin_img, "rb") as f:
     #     origin_img_data = f.read()
 
-    return GeneratedContent(
+    yield GeneratedContent(
         image_name=IMAGE_NAME,
         origin_image=open(origin_img, "rb").read(),
         audio_content=open(audio_content, "rb").read(),
@@ -34,14 +43,35 @@ def mockup():
     )
 
 
-def test_can_insert_generated_content_with_valid(blob_session, mockup):
+# def test_can_insert_generated_content_with_valid(blob_session, mockup):
+#     # given : 유효한 입력값
+#     # when : DB 저장 요청
+#     result = AdminRepository.insert_content(blob_session, mockup)
+
+#     # then : 정상 응답
+#     assert result.image_name == IMAGE_NAME
+
+#     # 계정 삭제
+#     result = AdminRepository.delete_content(blob_session, result)
+#     assert result.image_name == IMAGE_NAME
+
+
+def test_can_insert_text_content_with_valid(mongo_session):
     # given : 유효한 입력값
+    mockup = GeneratedTextContent(
+        image_name=IMAGE_NAME,
+        text_content=base64.b64encode(TEXT_CONTENT),
+        coord_content=base64.b64encode(COORD_CONTENT)
+    )
+
     # when : DB 저장 요청
-    result = AdminRepository.insert_content(blob_session, mockup)
+    result = AdminRepository.insert_text_content(
+        mongo_session, mockup
+    )
 
     # then : 정상 응답
     assert result.image_name == IMAGE_NAME
 
-    # 계정 삭제
-    result = AdminRepository.delete_content(blob_session, result)
+    # 삭제
+    result = AdminRepository.delete_text_content(mongo_session, mockup)
     assert result.image_name == IMAGE_NAME

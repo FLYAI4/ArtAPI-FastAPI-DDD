@@ -1,5 +1,9 @@
 import os
-from src.admin.domain.entity import GeneratedContent, GeneratedContentName
+from src.admin.domain.entity import (
+    GeneratedContent,
+    GeneratedContentName,
+    GeneratedTextContent
+    )
 from src.admin.adapter.database.database_abs import AdminRepositoryInterface
 from src.shared_kernel.domain.exception import DBError
 from src.shared_kernel.domain.error_code import RepositoryError
@@ -60,5 +64,37 @@ class AdminRepository(AdminRepositoryInterface):
                     container_name, blob.name)
                 blob_client.delete_blob()
             return generated_content_name
+        except Exception as e:
+            raise DBError(**RepositoryError.DBProcess.value, err=e)
+
+    def insert_text_content(
+            mongo_session, generated_text_content: GeneratedTextContent
+    ) -> GeneratedContentName:
+        try:
+            generated_data = {
+                "_id": generated_text_content.image_name,
+                "text_content": generated_text_content.text_content,
+                "coord_content": generated_text_content.coord_content,
+            }
+            collection = mongo_session["user_generated"]
+
+            result = collection.insert_one(generated_data)
+            return GeneratedContentName(
+                image_name=result.inserted_id
+            )
+        except Exception as e:
+            raise DBError(**RepositoryError.DBProcess.value, err=e)
+
+    def delete_text_content(
+            mongo_session, generated_text_content: GeneratedTextContent
+    ) -> GeneratedContentName:
+        try:
+            collection = mongo_session["user_generated"]
+            collection.delete_one(
+                {"_id": generated_text_content.image_name}
+            )
+            return GeneratedContentName(
+                image_name=generated_text_content.image_name
+            )
         except Exception as e:
             raise DBError(**RepositoryError.DBProcess.value, err=e)

@@ -18,3 +18,10 @@ class GeneratedContentName:
 class OriginImageInfo:
     image_name: str
     image_file: bytes
+
+
+@dataclass
+class GeneratedTextContent:
+    image_name: str
+    text_content: bytes = None
+    coord_content: bytes = None
