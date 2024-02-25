@@ -14,28 +14,13 @@ class FileInfo:
 
 
 @dataclass
-class GeneratedIdInfo:
+class UserReview:
     id: str
-    generated_id: str
+    image_name: str
+    like_status: bool
+    review_content: str
 
 
 @dataclass
-class UserContent:
+class UserId:
     id: str
-    generated_id: str
-    status: bool
-
-
-@dataclass
-class GeneratedContent:
-    generated_id: str
-    tag: str
-    content: bytes = None
-
-
-@dataclass
-class GeneratedContentModel:
-    id: str
-    generated_id: str
-    text_content: bytes
-    coord_content: bytes
