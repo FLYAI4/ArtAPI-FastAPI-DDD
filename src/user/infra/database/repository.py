@@ -1,3 +1,4 @@
+import os
 from sqlalchemy import select
 from src.user.adapter.database.database_itf import UserRepositoryInterface
 from src.user.domain.entity import UserReview, UserId
@@ -69,6 +70,51 @@ class UserRepository(UserRepositoryInterface):
             return ContentInfo(
                 tag="coord",
                 data=document["coord_content"]
+            )
+        except Exception as e:
+            raise DBError(**RepositoryError.DBProcess.value, err=e)
+
+    def get_origin_image(
+            azure_blob_session, content_name: ContentName
+    ) -> ContentInfo:
+        try:
+            image_file = os.path.join(
+                content_name.image_name, "origin_img.jpg")
+            blob_client = azure_blob_session.get_blob_client(
+                "generated-content", image_file)
+            return ContentInfo(
+                tag="origin_image",
+                data=blob_client.download_blob().readall()
+            )
+        except Exception as e:
+            raise DBError(**RepositoryError.DBProcess.value, err=e)
+
+    def get_audio_content(
+            azure_blob_session, content_name: ContentName
+    ) -> ContentInfo:
+        try:
+            image_file = os.path.join(
+                content_name.image_name, "main.mp3")
+            blob_client = azure_blob_session.get_blob_client(
+                "generated-content", image_file)
+            return ContentInfo(
+                tag="audio",
+                data=blob_client.download_blob().readall()
+            )
+        except Exception as e:
+            raise DBError(**RepositoryError.DBProcess.value, err=e)
+
+    def get_video_content(
+            azure_blob_session, content_name: ContentName
+    ) -> ContentInfo:
+        try:
+            image_file = os.path.join(
+                content_name.image_name, "video.mp4")
+            blob_client = azure_blob_session.get_blob_client(
+                "generated-content", image_file)
+            return ContentInfo(
+                tag="video",
+                data=blob_client.download_blob().readall()
             )
         except Exception as e:
             raise DBError(**RepositoryError.DBProcess.value, err=e)

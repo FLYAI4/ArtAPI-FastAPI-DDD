@@ -31,3 +31,21 @@ class UserRepositoryInterface(ABC):
         mongo_session, content_name: ContentName
     ) -> ContentInfo:
         pass
+
+    @abstractmethod
+    def get_origin_image(
+        azure_blob_session, content_name: ContentName
+    ) -> ContentInfo:
+        pass
+
+    @abstractmethod
+    def get_audio_content(
+        azure_blob_session, content_name: ContentName
+    ) -> ContentInfo:
+        pass
+
+    @abstractmethod
+    def get_video_content(
+        azure_blob_session, content_name: ContentName
+    ) -> ContentInfo:
+        pass
