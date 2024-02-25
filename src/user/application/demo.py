@@ -50,7 +50,7 @@ class UserCommandDemo:
 
     def demo_get_video_content(self, generated_id: str):
         # video demo content 추가(나무 사진으로)
-        video_file = os.path.abspath(os.path.join(self.demo_path, "loading.gif"))
+        video_file = os.path.abspath(os.path.join(self.demo_path, "video.mp4"))
         with open(video_file, "rb") as f:
             video_content = f.read()
             return {
