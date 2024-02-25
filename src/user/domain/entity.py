@@ -24,3 +24,14 @@ class UserReview:
 @dataclass
 class UserId:
     id: str
+
+
+@dataclass
+class ContentName:
+    image_name: str
+
+
+@dataclass
+class ContentInfo:
+    tag: str
+    data: bytes = None

@@ -12,4 +12,4 @@ if src_path not in sys.path:
 if __name__ == "__main__":
     from src.shared_kernel.adapter.app import create_app
     app = create_app()
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=8000, timeout_keep_alive=600)

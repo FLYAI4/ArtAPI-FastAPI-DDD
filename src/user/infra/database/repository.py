@@ -4,6 +4,7 @@ from src.user.domain.entity import UserReview, UserId
 from src.shared_kernel.domain.exception import DBError
 from src.shared_kernel.domain.error_code import RepositoryError
 from src.user.infra.database.model import Review
+from src.user.domain.entity import ContentInfo, ContentName
 
 
 class UserRepository(UserRepositoryInterface):
@@ -40,6 +41,34 @@ class UserRepository(UserRepositoryInterface):
                 session.commit()
             return UserId(
                 id=user_review.id
+            )
+        except Exception as e:
+            raise DBError(**RepositoryError.DBProcess.value, err=e)
+
+    def get_text_content(
+            mongo_session, content_name: ContentName
+    ) -> ContentInfo:
+        try:
+            collection = mongo_session["user_generated"]
+            document = collection.find_one(
+                {"_id": content_name.image_name})
+            return ContentInfo(
+                tag="text",
+                data=document["text_content"]
+            )
+        except Exception as e:
+            raise DBError(**RepositoryError.DBProcess.value, err=e)
+
+    def get_coord_content(
+            mongo_session, content_name: ContentName
+    ) -> ContentInfo:
+        try:
+            collection = mongo_session["user_generated"]
+            document = collection.find_one(
+                {"_id": content_name.image_name})
+            return ContentInfo(
+                tag="coord",
+                data=document["coord_content"]
             )
         except Exception as e:
             raise DBError(**RepositoryError.DBProcess.value, err=e)
