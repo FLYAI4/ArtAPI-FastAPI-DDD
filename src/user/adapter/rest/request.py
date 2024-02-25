@@ -2,5 +2,5 @@ import pydantic
 
 
 class InsertUserContentReview(pydantic.BaseModel):
-    like_satus: bool
+    like_status: bool
     review_content: str

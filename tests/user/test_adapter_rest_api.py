@@ -10,7 +10,7 @@ test_img_path = os.path.abspath(os.path.join(user_path, "test_img"))
 
 # Mock data
 TOKEN = "mock-token!!!!"
-ID = "userservice1@naver.com"
+ID = "kim@naver.com"
 IMAGE_PATH = os.path.abspath(os.path.join(test_img_path, "test.jpg"))
 
 
@@ -20,9 +20,15 @@ def client():
     yield TestClient(app)
 
 
-def test_user_can_insert_image_with_valid(client):
+@pytest.fixture
+def token(client):
+    yield ""
+
+
+def test_user_can_insert_image_with_valid(client, token):
     # given : 유효한 payload
-    headers = {"id": ID, "token": TOKEN}
+    headers = {"id": ID, "token": token}
+    print(headers)
 
     with open(IMAGE_PATH, "rb") as f:
         files = {"file": ("image.jpg", f, "image/jpeg")}
@@ -37,147 +43,103 @@ def test_user_can_insert_image_with_valid(client):
     assert response.status_code == 200
     assert response.json()["meta"]["message"] == "ok"
     assert response.json()["data"]["generated_id"]
+    print(response.json()["data"]["generated_id"])
 
 
-# def test_user_cannot_insert_image_with_non_header(client):
-#     # given : 유효하지 않은 payload (header 없이 요청)
+def test_user_cannot_insert_image_with_non_header(client):
+    # given : 유효하지 않은 payload (header 없이 요청)
 
-#     with open(IMAGE_PATH, "rb") as f:
-#         files = {"file": ("image.jpg", f, "image/jpeg")}
-#         # when : 이미지 저장 요청
-#         response = client.post(
-#             "/user/image",
-#             files=files
-#         )
+    with open(IMAGE_PATH, "rb") as f:
+        files = {"file": ("image.jpg", f, "image/jpeg")}
+        # when : 이미지 저장 요청
+        response = client.post(
+            "/user/image",
+            files=files
+        )
 
-#     # then : 422
-#     assert response.status_code == 422
-#     assert response.json()["meta"]["message"] == "A required value is missing. Please check."
-
-
-# def test_user_cannot_insert_image_with_non_image(client):
-#     # given : 유효하지 않은 payload (file 없이 요청)
-#     headers = {"id": ID, "token": TOKEN}
-
-#     # when : 이미지 저장 요청
-#     response = client.post(
-#             "/user/image",
-#             headers=headers
-#         )
-
-#     # given : 에러메시지
-#     assert response.status_code == 422
-#     assert response.json()["meta"]["message"] == "A required value is missing. Please check."
+    # then : 422
+    assert response.status_code == 422
+    assert response.json()["meta"]["message"] == "A required value is missing. Please check."
 
 
-# @pytest.mark.asyncio
-# async def test_generate_content(client):
-#     headers = {"id": ID, "token": TOKEN}
-#     with open(IMAGE_PATH, "rb") as f:
-#         files = {"file": ("image.jpg", f, "image/jpeg")}
-#         # when : 이미지 저장 요청
-#         response = client.post(
-#             "/user/image",
-#             headers=headers,
-#             files=files
-#         )
+def test_user_cannot_insert_image_with_non_image(client, token):
+    # given : 유효하지 않은 payload (file 없이 요청)
+    headers = {"id": ID, "token": token}
 
-#     # then : 정상 응답 username
-#     assert response.status_code == 200
-#     assert response.json()["meta"]["message"] == "ok"
-#     assert response.json()["data"]["generated_id"]
+    # when : 이미지 저장 요청
+    response = client.post(
+            "/user/image",
+            headers=headers
+        )
 
-#     # given : 유효한 payload
-#     body = {
-#         "generated_id": response.json()["data"]["generated_id"]
-#     }
-
-#     # when : 이미지 저장 요청
-#     app = create_app()
-#     async with httpx.AsyncClient(app=app, base_url="http://testserver") as ac_client:
-#         response = await ac_client.post("/user/content",
-#                                         headers=headers,
-#                                         json=body)
-#         assert response.status_code == 200
-
-#         # async for chunk in response.aiter_bytes():
-#         #     print(chunk)
+    # given : 에러메시지
+    assert response.status_code == 422
+    assert response.json()["meta"]["message"] == "A required value is missing. Please check."
 
 
-# def test_user_can_demo_insert_image_with_valid(client):
-#     # given : 유효한 payload
-#     headers = {"id": ID, "token": TOKEN}
+def test_user_can_get_main_content(client, token):
+    # given : 유효한 payload
+    headers = {"id": ID, "token": token, "generated-id": "4.jpg"}
 
-#     with open(IMAGE_PATH, "rb") as f:
-#         files = {"file": ("image.jpg", f, "image/jpeg")}
-#         # when : 이미지 저장 요청
-#         response = client.post(
-#             "/user/image/demo",
-#             headers=headers,
-#             files=files
-#         )
+    # when : 콘텐츠 요청
+    response = client.get(
+        "/user/content",
+        headers=headers
+    )
 
-#     # then : 정상 응답 username
-#     assert response.status_code == 200
-#     assert response.json()["meta"]["message"] == "ok"
-#     assert response.json()["data"]["generated_id"]
-
-
-# @pytest.mark.asyncio
-# async def test_demo_generate_content(client):
-#     # given : 유효한 payload
-#     headers = {"id": ID, "token": TOKEN, "generated_id": "demo"}
-
-#     # when : 이미지 저장 요청
-#     app = create_app()
-#     async with httpx.AsyncClient(app=app, base_url="http://testserver") as ac_client:
-#         response = await ac_client.get("/user/content/demo", headers=headers)
-#         assert response.status_code == 200
-
-#         # async for chunk in response.aiter_bytes():
-#         #     print(chunk)
+    # given : 정상 응답
+    assert response.status_code == 200
+    assert response.json()["meta"]["message"] == "ok"
+    assert response.json()["data"]["audio_content"]
+    assert response.json()["data"]["resize_image"]
+    print(response.json()["data"]["text_content"])
 
 
-# def test_user_can_demo_get_text_audio_content(client):
-#     # given : 유효한 payload
-#     headers = {"id": ID, "token": TOKEN, "generated_id": "demo"}
+def test_user_can_get_coord_content(client, token):
+    # given : 유효한 payload
+    headers = {"id": ID, "token": token, "generated-id": "4.jpg"}
 
-#     response = client.get(
-#             "/user/content/text/demo",
-#             headers=headers
-#         )
+    # when : 콘텐츠 요청
+    response = client.get(
+        "/user/content/coord",
+        headers=headers
+    )
 
-#     # then : 정상 응답 username
-#     assert response.status_code == 200
-#     assert response.json()["meta"]["message"] == "ok"
-#     assert response.json()["data"]["text_content"]
-
-
-# def test_user_can_demo_get_coord_content(client):
-#     # given : 유효한 payload
-#     headers = {"id": ID, "token": TOKEN, "generated_id": "demo"}
-
-#     response = client.get(
-#             "/user/content/coord/demo",
-#             headers=headers
-#         )
-
-#     # then : 정상 응답 username
-#     assert response.status_code == 200
-#     assert response.json()["meta"]["message"] == "ok"
-#     assert response.json()["data"]["나무"]
+    # given : 정상 응답
+    assert response.status_code == 200
+    assert response.json()["meta"]["message"] == "ok"
+    assert response.json()["data"]["coord_content"]
 
 
-# def test_user_can_demo_get_video_content(client):
-#     # given : 유효한 payload
-#     headers = {"id": ID, "token": TOKEN, "generated_id": "demo"}
+def test_user_can_get_video_content(client, token):
+    # given : 유효한 payload
+    headers = {"id": ID, "token": token, "generated-id": "4.jpg"}
 
-#     response = client.get(
-#             "/user/content/video/demo",
-#             headers=headers
-#         )
+    # when : 콘텐츠 요청
+    response = client.get(
+        "/user/content/video",
+        headers=headers
+    )
 
-#     # then : 정상 응답 username
-#     assert response.status_code == 200
-#     assert response.json()["meta"]["message"] == "ok"
-#     assert response.json()["data"]["video_content"]
+    # given : 정상 응답
+    assert response.status_code == 200
+    assert response.json()["meta"]["message"] == "ok"
+    assert response.json()["data"]["video_content"]
+
+
+def test_user_can_insert_user_content_review(client, token):
+    # given : 유효한 payload
+    headers = {"id": ID, "token": token, "generated-id": "4.jpg"}
+    body = {"like_status": True, "review_content": "thank you!!"}
+
+    # when : 콘텐츠 요청
+    response = client.post(
+        "/user/content/review",
+        headers=headers,
+        json=body
+    )
+
+    # given : 정상 응답
+    assert response.status_code == 200
+    assert response.json()["meta"]["message"] == "ok"
+    assert response.json()["data"]["id"] == ID

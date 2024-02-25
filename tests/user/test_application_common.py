@@ -78,7 +78,7 @@ async def test_can_get_video_content_with_valid(command):
 @pytest.mark.asyncio
 async def test_can_insert_user_content_review_with_valid(command):
     mockup = InsertUserContentReview(
-        like_satus=True,
+        like_status=True,
         review_content="hello review"
     )
 

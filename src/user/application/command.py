@@ -1,3 +1,4 @@
+import base64
 from fastapi import UploadFile
 from sqlalchemy.orm import Session
 from src.user.domain.entity import (
@@ -16,6 +17,7 @@ from src.user.infra.database.repository import UserRepository
 from src.user.domain.exception import UserServiceError, UserApplicationError
 from src.user.domain.errorcode import InsertImageError, GetContentError
 from src.user.adapter.rest.request import InsertUserContentReview
+
 
 class UserCommandUseCase:
     def __init__(
@@ -65,9 +67,9 @@ class UserCommandUseCase:
             )
 
             return MainContent(
-                resize_image=image_content.data,
+                resize_image=base64.b64encode(image_content.data),
                 text_content=text_content.data.decode(),
-                audio_content=audio_content.data
+                audio_content=base64.b64encode(audio_content.data)
             )
         except DBError as e:
             raise e
@@ -103,7 +105,7 @@ class UserCommandUseCase:
                 self.azure_blob_session, content_name
             )
             return VideoContent(
-                video_content=video_content.data
+                video_content=base64.b64encode(video_content.data)
             )
         except DBError as e:
             raise e
@@ -121,7 +123,7 @@ class UserCommandUseCase:
             user_review = UserReview(
                 id=id,
                 image_name=generated_id,
-                like_status=request.like_satus,
+                like_status=request.like_status,
                 review_content=request.review_content
             )
             return UserRepository.insert_user_review(

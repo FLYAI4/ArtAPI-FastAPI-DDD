@@ -1,14 +1,20 @@
 from sqlalchemy.orm import Session
-from fastapi.responses import StreamingResponse
 from fastapi import APIRouter, UploadFile, File, Header, Depends
 from src.user.application.command import UserCommandUseCase
-from src.user.application.demo import UserCommandDemo
-from src.user.adapter.rest.response import SignUpUserResponse, GetContentResponse
+from src.user.adapter.rest.response import (
+    SignUpUserResponse,
+    GetContentResponse,
+    GetCoordContentResponse,
+    GetVideoContentResponse,
+    PostContentReviewResponse
+)
 from src.shared_kernel.infra.database.connection import (
     MongoManager,
-    PostgreManager
+    PostgreManager,
+    BlobStorageManager
 )
 from src.shared_kernel.infra.fastapi.auth import get_current_user
+from src.user.adapter.rest.request import InsertUserContentReview
 
 user = APIRouter(prefix="/user")
 
@@ -25,57 +31,58 @@ async def insert_image(
     return SignUpUserResponse(file_info=result).build()
 
 
-
-@user.post('/image/demo')
-async def demo_insert_image(
+@user.get('/content')
+async def get_main_content(
     id: str = Header(),
-    token: str = Header(),
-    file: UploadFile = File(...),
+    generated_id: str = Header(),
+    mongo_session: any = Depends(MongoManager.get_session),
+    azure_blob_session: any = Depends(BlobStorageManager.get_session),
+    auth: str = Depends(get_current_user)
 ):
-    command = UserCommandDemo()
-    result = command.demo_insert_image(id, file)
-    return SignUpUserResponse(file_info=result).build()
-
-
-@user.get('/content/demo')
-async def demo_generate_content(
-    id: str = Header(),
-    token: str = Header(),
-    generated_id: str = "demo"
-):
-    command = UserCommandDemo()
-    return StreamingResponse(command.demo_generate_content(generated_id),
-                             media_type="text/event-stream")
-
-
-@user.get('/content/text/demo')
-async def demo_get_text_audio_content(
-    id: str = Header(),
-    token: str = Header(),
-    generated_id: str = "demo"
-):
-    command = UserCommandDemo()
-    result = command.demo_get_text_audio_content(generated_id)
+    command = UserCommandUseCase(
+        mongo_session=mongo_session,
+        azure_blob_session=azure_blob_session
+        )
+    result = await command.get_main_content(generated_id)
     return GetContentResponse(content=result).build()
 
 
-@user.get('/content/coord/demo')
-async def demo_demo_get_coord_content(
+@user.get('/content/coord')
+async def get_coord_content(
     id: str = Header(),
-    token: str = Header(),
-    generated_id: str = "demo"
+    generated_id: str = Header(),
+    mongo_session: any = Depends(MongoManager.get_session),
+    auth: str = Depends(get_current_user)
 ):
-    command = UserCommandDemo()
-    result = command.demo_get_coord_content(generated_id)
-    return GetContentResponse(content=result).build()
+    command = UserCommandUseCase(mongo_session=mongo_session)
+    result = await command.get_coord_content(generated_id)
+    return GetCoordContentResponse(content=result).build()
 
 
-@user.get('/content/video/demo')
-async def demo_demo_get_video_content(
+@user.get('/content/video')
+async def get_video_content(
     id: str = Header(),
-    token: str = Header(),
-    generated_id: str = "demo"
+    generated_id: str = Header(),
+    azure_blob_session: any = Depends(BlobStorageManager.get_session),
+    auth: str = Depends(get_current_user)
 ):
-    command = UserCommandDemo()
-    result = command.demo_get_video_content(generated_id)
-    return GetContentResponse(content=result).build()
+    command = UserCommandUseCase(azure_blob_session=azure_blob_session)
+    result = await command.get_video_content(generated_id)
+    return GetVideoContentResponse(content=result).build()
+
+
+@user.post('/content/review')
+async def insert_user_content_review(
+    request: InsertUserContentReview,
+    id: str = Header(),
+    generated_id: str = Header(),
+    postgre_session: Session = Depends(PostgreManager.get_session),
+    auth: str = Depends(get_current_user)
+):
+    command = UserCommandUseCase(postgre_session=postgre_session)
+    result = await command.insert_user_content_review(
+        id=id,
+        generated_id=generated_id,
+        request=request
+    )
+    return PostContentReviewResponse(content=result).build()
