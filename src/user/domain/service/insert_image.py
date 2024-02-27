@@ -93,7 +93,7 @@ class InsertImageService:
         torch_path = self.__find_torch_path()
         model_file = os.path.abspath(os.path.join(
             torch_path, "resnet50_model.pth"))
-        model = torch.load(model_file)
+        model = torch.load(model_file, map_location=torch.device('cpu'))
         return model
 
     def __vectorize_image(self, user_file: str, model: any):

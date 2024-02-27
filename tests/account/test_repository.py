@@ -29,6 +29,7 @@ def mockup():
 def session():
     yield PostgreManager.get_session()
 
+
 def test_account_repository_can_insert_user_account(mockup, session):
     # given : 유효한 유저 정보
     unique_id = ID + str(uuid.uuid4())[:10]
