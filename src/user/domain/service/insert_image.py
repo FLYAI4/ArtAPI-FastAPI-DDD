@@ -48,11 +48,13 @@ class InsertImageService:
         )
 
         # retrieval image
+        self.check_time("start retireval")
         similarity_image = self.__retrieval_image(user_file)
         if not similarity_image:
             await delete_folder(user_path)
             raise UserServiceError(**InsertImageError.NonRetrievalImage.value)
 
+        self.check_time("Finished!!")
         return FileInfo(unique_id=user_unique_id, image_name=similarity_image)
 
     @staticmethod
@@ -78,8 +80,11 @@ class InsertImageService:
         user_file: str
     ):
         # load model and image
+        self.check_time("start load_model")
         model = self.__load_model()
+        self.check_time("start __vectorize_image")
         user_image_vector = self.__vectorize_image(user_file, model)
+        self.check_time("start __compute_similarity")
         similarities = self.__compute_similarity(user_image_vector)
 
         # Return exception if lower than threshold
@@ -93,12 +98,15 @@ class InsertImageService:
         torch_path = self.__find_torch_path()
         model_file = os.path.abspath(os.path.join(
             torch_path, "resnet50_model.pth"))
-        model = torch.load(model_file)
+        model = torch.load(model_file, map_location=torch.device('cpu'))
         return model
 
     def __vectorize_image(self, user_file: str, model: any):
+        self.check_time("start __preprocess_image")
         user_file_batch = self.__preprocess_image(user_file)
+        self.check_time("start model.eval")
         model.eval()
+        self.check_time("starttorch.no_grad")
         with torch.no_grad():
             feature_vector = model(user_file_batch)
         return feature_vector.squeeze()
@@ -108,6 +116,7 @@ class InsertImageService:
         input_feature = user_image_vector.cpu().numpy()
         similarities = dict()
 
+        self.check_time("check db_image_features.items")
         for img_name, vec in db_image_features.items():
             feature = np.array(vec)
             similarity = cosine_similarity(input_feature.reshape(1, -1),
@@ -147,3 +156,9 @@ class InsertImageService:
         infra_path = os.path.abspath(os.path.join(user_path, "infra"))
         torch_path = os.path.abspath(os.path.join(infra_path, "torch"))
         return torch_path
+
+    @staticmethod
+    def check_time(flag: str):
+        current_time = datetime.now()
+        timestamp = current_time.strftime("%Y-%m-%d -- %H:%M:%S")
+        print(f"{flag} : {timestamp}")
