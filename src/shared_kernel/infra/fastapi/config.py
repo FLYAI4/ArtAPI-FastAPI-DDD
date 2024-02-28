@@ -19,6 +19,7 @@ class EnvSettings(BaseSettings):
     AZURE_BLOB_STORAGE_CONNECTION_URL:  ClassVar[str] = os.environ.get(
         'AZURE_BLOB_STORAGE_CONNECTION_URL'
         )
+    ELK_STACK_URL: ClassVar[str] = os.environ.get('ELK_STACK_URL')
 
 
 settings = EnvSettings()
