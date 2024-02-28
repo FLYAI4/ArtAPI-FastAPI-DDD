@@ -7,67 +7,6 @@ ArtAPI refactoring with Hexagonal Architcture for DDD.
 
 <br>
 
-## Getting Started
-
-To run the service, follow the instructions below:
-
-1. Clone the repository:
-
-```sh
-git clone https://github.com/robert-min/ArtCore-FastAPI-DDD.git
-```
-
-2. Navigate to the project directory:
-
-```sh
-cd ArtCore-FastAPI-DDD
-```
-
-3. Install the dependencies:
-
-```sh
-pip install -r requirements.txt
-```
-
-4. Run the server:
-- add src/shared_kernel/infra/fastapi/.env
-
-```sh
-python main.py
-```
-
-<br>
-
-
-## Contributing
-
-Contributions are welcome! If you would like to contribute to ArtCore-Go, please follow these steps:
-
-1. Fork the repository.
-
-2. Create a new branch:
-
-```sh
-git checkout -b my-feature
-```
-
-
-3. Make your changes and commit them:
-
-```sh
-git commit -m "Add my feature"
-```
-
-4. Push to your forked repository:
-
-```sh
-git push origin my-feature
-```
-
-5. Open a pull request. 
-
-<br>
-
 
 ## Tree
 
@@ -238,3 +177,76 @@ git push origin my-feature
         ├── test_service_generated_content.py
         └── test_service_insert_image.py
 ```
+
+<br>
+
+## Service monitoring
+
+![image](https://github.com/FLYAI4/ArtAPI-FastAPI-DDD/assets/91866763/f6139465-3b27-4811-b7dd-deea2a90dfce)
+
+
+
+
+<br>
+
+## Getting Started
+
+To run the service, follow the instructions below:
+
+1. Clone the repository:
+
+```sh
+git clone https://github.com/robert-min/ArtCore-FastAPI-DDD.git
+```
+
+2. Navigate to the project directory:
+
+```sh
+cd ArtCore-FastAPI-DDD
+```
+
+3. Install the dependencies:
+
+```sh
+pip install -r requirements.txt
+```
+
+4. Run the server:
+- add src/shared_kernel/infra/fastapi/.env
+
+```sh
+python main.py
+```
+
+<br>
+
+
+## Contributing
+
+Contributions are welcome! If you would like to contribute to ArtCore-Go, please follow these steps:
+
+1. Fork the repository.
+
+2. Create a new branch:
+
+```sh
+git checkout -b my-feature
+```
+
+
+3. Make your changes and commit them:
+
+```sh
+git commit -m "Add my feature"
+```
+
+4. Push to your forked repository:
+
+```sh
+git push origin my-feature
+```
+
+5. Open a pull request. 
+
+<br>
+
