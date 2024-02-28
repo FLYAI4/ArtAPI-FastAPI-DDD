@@ -21,7 +21,7 @@ class InsertImageService:
     def __init__(self) -> None:
         self.width = 510
         self.height = 680
-        self.threshold = 0.7
+        self.threshold = 0.65
 
     async def insert_image(self, origin_image: OriginImageInfo) -> FileInfo:
         # set unique id
