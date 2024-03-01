@@ -2,7 +2,6 @@ from fastapi import Request
 from src.shared_kernel.domain.exception import BaseHttpException
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
-from src.shared_kernel.infra.fastapi.logger import Logger
 
 
 def error_handlers(app) -> JSONResponse:
@@ -19,7 +18,7 @@ def error_handlers(app) -> JSONResponse:
             },
             "data": None
         }
-        Logger("ERROR", str(exc.error))
+        # Logger("ERROR", str(exc.error))
         return JSONResponse(
             status_code=exc.code,
             content=content
@@ -38,7 +37,7 @@ def error_handlers(app) -> JSONResponse:
             },
             "data": None
         }
-        Logger("INFO", str(exc.errors))
+        # Logger("INFO", str(exc.errors))
         return JSONResponse(
             status_code=422,
             content=content

@@ -3,6 +3,9 @@ from src.shared_kernel.infra.database.connection import PostgreManager
 from src.account.infra.database.repository import AccountRepository
 from src.account.adapter.rest.request import SignUpUserRequest, LogInUserRequest
 from src.account.application.command import AccountCommandUseCase
+from src.account.domain.service.sign_up import SignUpService
+from src.account.domain.service.log_in import LogInService
+
 
 # Mock data
 ID = "accountservice1@naver.com"
@@ -17,8 +20,18 @@ def session():
     yield PostgreManager.get_session()
 
 
+@pytest.fixture
+def command():
+    yield AccountCommandUseCase(
+        AccountRepository,
+        SignUpService(),
+        LogInService(),
+        PostgreManager.get_session()
+    )
+
+
 @pytest.mark.order(1)
-def test_can_sign_up_user(session):
+def test_can_sign_up_user(command):
     # given : 유효한 계정 정보
     mockup = SignUpUserRequest(
         id=ID,
@@ -29,7 +42,6 @@ def test_can_sign_up_user(session):
     )
 
     # when : 회원 가입 요청
-    command = AccountCommandUseCase(AccountRepository, session)
     result = command.sign_up_user(mockup)
 
     # then : 회원 가입 확인
@@ -37,14 +49,13 @@ def test_can_sign_up_user(session):
 
 
 @pytest.mark.order(2)
-def test_can_log_in_user(session):
+def test_can_log_in_user(session, command):
     mockup = LogInUserRequest(
         id=ID,
         password=PASSWORD
     )
 
     # when : 로그인 요청
-    command = AccountCommandUseCase(AccountRepository, session)
     result = command.log_in_user(mockup)
 
     # then : 로그인 확인

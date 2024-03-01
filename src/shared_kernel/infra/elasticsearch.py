@@ -9,5 +9,8 @@ class ElasticsearchHandler(logging.Handler):
         self.url = url
 
     def emit(self, data):
-        headers = {'Content-Type': 'application/json'}
-        requests.post(self.url, headers=headers, data=json.dumps(data))
+        try:
+            headers = {'Content-Type': 'application/json'}
+            requests.post(self.url, headers=headers, data=json.dumps(data))
+        except:
+            print("No logger setting")
