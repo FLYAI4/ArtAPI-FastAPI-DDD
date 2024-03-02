@@ -16,5 +16,6 @@ class AccountContainer(containers.DeclarativeContainer):
         account_repo=account_repo,
         signup_service=singup_service,
         login_service=login_service,
-        postgre_session=PostgreManager.get_session
+        postgre_session=PostgreManager.get_session,
+        hello="hello"
     )

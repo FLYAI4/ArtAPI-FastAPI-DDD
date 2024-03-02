@@ -16,8 +16,7 @@ async def user_signup(
         Provide[AppContainer.account.account_command]
     ),
 ):
-    # print(account_command)
-    user_info = account_command.sign_up_user(requst)
+    user_info = account_command.sign_up_user(request=requst)
     return SignUpUserResponse(user_info=user_info).build()
 
 

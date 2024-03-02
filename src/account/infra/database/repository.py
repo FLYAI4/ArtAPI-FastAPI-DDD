@@ -9,8 +9,9 @@ from src.shared_kernel.domain.error_code import RepositoryError
 
 
 class AccountRepository(AccountRepositoryInterface):
+    @staticmethod
     def insert_user_account(
-            session: Session, user_account: AccountInfo
+            session, user_account: AccountInfo
     ) -> UserInfo:
         try:
             obj = Account(
