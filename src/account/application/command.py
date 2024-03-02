@@ -14,13 +14,11 @@ class AccountCommandUseCase:
             signup_service: SignUpService,
             login_service: LogInService,
             postgre_session: Session,
-            hello: str
     ) -> None:
         self.account_repo = account_repo
         self.signup_service = signup_service
         self.login_service = login_service
         self.postgre_session = postgre_session
-        self.hello = hello
 
     def sign_up_user(self, request: SignUpUserRequest) -> UserInfo:
         # convert request -> entity

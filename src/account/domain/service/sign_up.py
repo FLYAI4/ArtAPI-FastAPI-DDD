@@ -12,10 +12,9 @@ class SignUpService:
     def sign_up_user(
             self, session: Session, user_account: AccountInfo
     ) -> AccountInfo:
-        print("hello sign up!!")
         # Validate user's input data
         self.__check_user_id_pattern(user_account.id)
-        # self.__check_user_existence(session, user_account.id)
+        self.__check_user_existence(session, user_account.id)
 
         # Encrypt password
         encrypt_password = CipherManager().encrypt_password(
