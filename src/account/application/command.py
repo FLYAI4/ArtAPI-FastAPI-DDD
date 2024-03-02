@@ -10,11 +10,15 @@ from src.shared_kernel.domain.jwt import TokenManager
 class AccountCommandUseCase:
     def __init__(
             self,
-            account_repository: AccountRepository,
-            session: Session
+            account_repo: AccountRepository,
+            signup_service: SignUpService,
+            login_service: LogInService,
+            postgre_session: Session,
     ) -> None:
-        self.repository = account_repository
-        self.session = session
+        self.account_repo = account_repo
+        self.signup_service = signup_service
+        self.login_service = login_service
+        self.postgre_session = postgre_session
 
     def sign_up_user(self, request: SignUpUserRequest) -> UserInfo:
         # convert request -> entity
@@ -25,12 +29,11 @@ class AccountCommandUseCase:
             gender=request.gender,
             age=request.gender
         )
-
-        # check sign up
-        user_account = SignUpService().sign_up_user(self.session, user_account)
-
-        # save DB
-        user_info = self.repository.insert_user_account(self.session, user_account)
+        with self.postgre_session() as session:
+            # check sign up
+            user_account = self.signup_service.sign_up_user(session, user_account)
+            # save DB
+            user_info = self.account_repo.insert_user_account(session, user_account)
         return user_info
 
     def log_in_user(self, request: LogInUserRequest) -> TokenInfo:
@@ -39,9 +42,9 @@ class AccountCommandUseCase:
             id=request.id,
             password=request.password
         )
-
-        # check log in 
-        user_id = LogInService().log_in_user(self.session, user_info)
+        with self.postgre_session() as session:
+            # check log in
+            user_id = self.login_service.log_in_user(session, user_info)
 
         # make token
         token = TokenManager().create_token(user_id)
@@ -49,4 +52,3 @@ class AccountCommandUseCase:
             id=user_id,
             token=token
         )
-

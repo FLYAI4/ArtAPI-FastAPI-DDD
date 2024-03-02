@@ -18,10 +18,9 @@ from src.user.domain.util.local_file import (
 
 
 class InsertImageService:
-    def __init__(self) -> None:
-        self.width = 510
-        self.height = 680
-        self.threshold = 0.65
+    _IMAGE_WIDTH: int = 510
+    _IMAGE_HEIGHT: int = 680
+    _THRESHOLD: int = 0.65
 
     async def insert_image(self, origin_image: OriginImageInfo) -> FileInfo:
         # set unique id
@@ -44,7 +43,7 @@ class InsertImageService:
         self.__resize_image(
             origin_image.image_file,
             user_file,
-            self.width, self.height
+            InsertImageService._IMAGE_WIDTH,  InsertImageService._IMAGE_HEIGHT
         )
 
         # retrieval image
@@ -85,7 +84,7 @@ class InsertImageService:
         # Return exception if lower than threshold
         max_similarity = max(similarities.values())[0][0]
         print("similarity : ", max_similarity)
-        if max_similarity < self.threshold:
+        if max_similarity < InsertImageService._THRESHOLD:
             return None
         return max(similarities, key=similarities.get)
 

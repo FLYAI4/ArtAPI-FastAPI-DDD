@@ -6,7 +6,7 @@ from src.shared_kernel.infra.database.connection import PostgreManager
 from fastapi.testclient import TestClient
 
 # Mock data
-ID = "accountservice1@naver.com"
+ID = "h211@naver.com"
 PASSWORD = "test1234"
 NAME = "별명"
 GENDER = "male"
@@ -21,11 +21,12 @@ def client():
 
 @pytest.fixture
 def session():
-    yield PostgreManager().get_session()
+    yield PostgreManager.get_session()
 
 
 @pytest.mark.order(1)
-def test_can_sign_up_with_valid(client):
+@pytest.mark.asyncio
+async def test_can_sign_up_with_valid(client):
     # given : 유효한 payload
     mockup = {
         "id": ID,
@@ -42,14 +43,16 @@ def test_can_sign_up_with_valid(client):
     )
 
     # then : 정상 응답
+    print(response.json())
     assert response.status_code == 200
     assert response.json()["meta"]["message"] == "ok"
     assert response.json()["data"]["id"] == ID
 
 
 @pytest.mark.order(1)
-def test_cannot_sign_up_with_invalid(client):
-    ## given : 유효하지 않은 payload(name 없이)
+@pytest.mark.asyncio
+async def test_cannot_sign_up_with_invalid(client):
+    # given : 유효하지 않은 payload(name 없이)
     mockup = {
         "id": ID,
         "password": PASSWORD,
@@ -69,7 +72,8 @@ def test_cannot_sign_up_with_invalid(client):
 
 
 @pytest.mark.order(1)
-def test_cannot_log_in_with_invalid(client, session):
+@pytest.mark.asyncio
+async def test_cannot_log_in_with_invalid(client, session):
     # given : 유효한 payload
     mockup = {
         "id": ID
@@ -87,7 +91,8 @@ def test_cannot_log_in_with_invalid(client, session):
 
 
 @pytest.mark.order(2)
-def test_can_log_in_with_valid(client, session):
+@pytest.mark.asyncio
+async def test_can_log_in_with_valid(client, session):
     # given : 유효한 payload
     mockup = {
         "id": ID,

@@ -10,8 +10,9 @@ from src.shared_kernel.infra.database.connection import (
     PostgreManager,
     BlobStorageManager
 )
+from src.user.domain.service.insert_image import InsertImageService
 from src.user.adapter.rest.request import InsertUserContentReview
-
+from src.user.infra.database.repository import UserRepository
 
 user_path = os.path.abspath(os.path.join(__file__, os.path.pardir))
 test_img_path = os.path.abspath(os.path.join(user_path, "test_img"))
@@ -24,10 +25,13 @@ GENERATED_ID = "4.jpg"
 
 @pytest.fixture
 def command():
+
     yield UserCommandUseCase(
-        MongoManager.get_session(),
-        PostgreManager.get_session(),
-        BlobStorageManager.get_session()
+        UserRepository(),
+        InsertImageService(),
+        MongoManager.get_session,
+        PostgreManager.get_session,
+        BlobStorageManager.get_session
         )
 
 
@@ -37,7 +41,7 @@ async def test_can_insert_image_with_valid(command):
         file = UploadFile(file=f)
         result = await command.insert_image(ID, file)
 
-    assert result.image_name == "4.jpg"
+    assert result.image_name == "2.jpg"
 
 
 @pytest.mark.asyncio

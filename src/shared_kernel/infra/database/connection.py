@@ -9,13 +9,15 @@ from azure.storage.blob import BlobServiceClient
 class PostgreManager(DBManager):
     @staticmethod
     def get_session():
-        engin = create_engine(
+        engine = create_engine(
             settings.POSTGRESQL_CONNECTION_URL + settings.DB_NAME,
             pool_size=5,
             pool_recycle=100,
             max_overflow=10
         )
-        return Session(engin)
+        # if not database_exists(engine):
+        #     raise DBError(**RepositoryError.DBNoNExist.value)
+        return Session(engine)
 
 
 class MongoManager(DBManager):

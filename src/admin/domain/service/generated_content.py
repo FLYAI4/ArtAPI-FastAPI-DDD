@@ -11,10 +11,8 @@ from PIL import Image
 
 
 class GeneratedContentService:
-    def __init__(self) -> None:
-        self.width = 510
-        self.height = 680
-        self.threshold = 0.7
+    _IMAGE_WIDTH: int = 510
+    _IMAGE_HEIGHT: int = 680
 
     async def generated_content(
             self,
@@ -69,7 +67,8 @@ class GeneratedContentService:
 
         image = Image.open(io.BytesIO(origin_image_info.image_file))
         image = image.convert("RGB")
-        resized_image = image.resize((self.width, self.height))
+        resized_image = image.resize(
+            (GeneratedContentService._IMAGE_WIDTH, GeneratedContentService._IMAGE_HEIGHT))
         resized_image.save(resize_image)
 
         return resize_image

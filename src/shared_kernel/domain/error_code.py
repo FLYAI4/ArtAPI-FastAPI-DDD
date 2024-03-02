@@ -8,6 +8,11 @@ class RepositoryError(Enum):
         "message": "Failed to connect. Contact service administrator.",
         "log": "DB Process Error. Check DB module."
     }
+    DBNoNExist = {
+        "code": status.HTTP_500_INTERNAL_SERVER_ERROR,
+        "message": "Failed to connect. Contact service administrator.",
+        "log": "DB Not created."
+    }
 
 
 class TokenError(Enum):

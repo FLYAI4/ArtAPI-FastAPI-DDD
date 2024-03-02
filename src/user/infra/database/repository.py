@@ -9,6 +9,7 @@ from src.user.domain.entity import ContentInfo, ContentName
 
 
 class UserRepository(UserRepositoryInterface):
+    @staticmethod
     def insert_user_review(
             postgre_session, user_review: UserReview
     ) -> UserId:
@@ -28,6 +29,7 @@ class UserRepository(UserRepositoryInterface):
         except Exception as e:
             raise DBError(**RepositoryError.DBProcess.value, err=e)
 
+    @staticmethod
     def delete_user_review(
             postgre_session, user_review: UserReview
     ) -> UserId:
@@ -46,6 +48,7 @@ class UserRepository(UserRepositoryInterface):
         except Exception as e:
             raise DBError(**RepositoryError.DBProcess.value, err=e)
 
+    @staticmethod
     def get_text_content(
             mongo_session, content_name: ContentName
     ) -> ContentInfo:
@@ -60,6 +63,7 @@ class UserRepository(UserRepositoryInterface):
         except Exception as e:
             raise DBError(**RepositoryError.DBProcess.value, err=e)
 
+    @staticmethod
     def get_coord_content(
             mongo_session, content_name: ContentName
     ) -> ContentInfo:
@@ -74,6 +78,7 @@ class UserRepository(UserRepositoryInterface):
         except Exception as e:
             raise DBError(**RepositoryError.DBProcess.value, err=e)
 
+    @staticmethod
     def get_origin_image(
             azure_blob_session, content_name: ContentName
     ) -> ContentInfo:
@@ -89,6 +94,7 @@ class UserRepository(UserRepositoryInterface):
         except Exception as e:
             raise DBError(**RepositoryError.DBProcess.value, err=e)
 
+    @staticmethod
     def get_audio_content(
             azure_blob_session, content_name: ContentName
     ) -> ContentInfo:
@@ -104,6 +110,7 @@ class UserRepository(UserRepositoryInterface):
         except Exception as e:
             raise DBError(**RepositoryError.DBProcess.value, err=e)
 
+    @staticmethod
     def get_video_content(
             azure_blob_session, content_name: ContentName
     ) -> ContentInfo:

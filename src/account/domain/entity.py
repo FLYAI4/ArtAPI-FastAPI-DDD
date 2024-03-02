@@ -10,7 +10,6 @@ class AccountInfo:
     age: str
     status: str = True
 
-
 @dataclass
 class UserInfo:
     id: str

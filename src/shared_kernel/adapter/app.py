@@ -4,10 +4,16 @@ from src.account.adapter.rest.api import account
 from src.user.adapter.rest.api import user
 from src.admin.adapter.rest.api import admin
 from src.shared_kernel.infra.fastapi.error_handler import error_handlers
+from src.shared_kernel.infra.container import AppContainer
+
+app_container = AppContainer()
 
 
 def create_app():
     app = FastAPI()
+
+    # dependency container
+    app.container = app_container
 
     # Router
     app.include_router(account)

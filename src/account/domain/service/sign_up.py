@@ -21,7 +21,6 @@ class SignUpService:
             user_account.password
             )
         user_account.password = encrypt_password
-
         return user_account
 
     @staticmethod

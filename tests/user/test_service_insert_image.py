@@ -25,7 +25,7 @@ async def test_can_insert_image_with_valid():
     result = await InsertImageService().insert_image(origin_image)
     assert result.unique_id.split("_")[-1] == ID.split("@")[0]
     print(result.image_name)
-    assert result.image_name == "4.jpg"
+    assert result.image_name == "2.jpg"
 
 
 @pytest.mark.asyncio

@@ -1,30 +1,32 @@
 from fastapi import APIRouter, Depends
-from sqlalchemy.orm import Session
+from dependency_injector.wiring import Provide, inject
 from src.account.adapter.rest.request import SignUpUserRequest, LogInUserRequest
-from src.account.infra.database.repository import AccountRepository
-from src.shared_kernel.infra.database.connection import PostgreManager
 from src.account.application.command import AccountCommandUseCase
 from src.account.adapter.rest.response import SignUpUserResponse, LogInUserResponse
-
+from src.shared_kernel.infra.container import AppContainer
 
 account = APIRouter(prefix="/account")
 
 
 @account.post("/signup")
-def user_signup(
+@inject
+async def user_signup(
     requst: SignUpUserRequest,
-    session: Session = Depends(PostgreManager().get_session)
+    account_command: AccountCommandUseCase = Depends(
+        Provide[AppContainer.account.account_command]
+    ),
 ):
-    command = AccountCommandUseCase(AccountRepository, session)
-    user_info = command.sign_up_user(requst)
+    user_info = account_command.sign_up_user(request=requst)
     return SignUpUserResponse(user_info=user_info).build()
 
 
 @account.post("/login")
-def user_login(
+@inject
+async def user_login(
     requst: LogInUserRequest,
-    session: Session = Depends(PostgreManager().get_session)
+    account_command: AccountCommandUseCase = Depends(
+        Provide[AppContainer.account.account_command]
+    ),
 ):
-    command = AccountCommandUseCase(AccountRepository, session)
-    token_info = command.log_in_user(requst)
+    token_info = account_command.log_in_user(requst)
     return LogInUserResponse(token_info=token_info).build()
