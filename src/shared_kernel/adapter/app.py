@@ -17,8 +17,8 @@ def create_app():
 
     # Router
     app.include_router(account)
-    # app.include_router(user)
-    # app.include_router(admin)
+    app.include_router(user)
+    app.include_router(admin)
 
     # Handler
     error_handlers(app)

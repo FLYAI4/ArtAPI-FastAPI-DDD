@@ -25,6 +25,7 @@ GENERATED_ID = "4.jpg"
 
 @pytest.fixture
 def command():
+
     yield UserCommandUseCase(
         UserRepository(),
         InsertImageService(),

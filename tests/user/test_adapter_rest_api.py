@@ -1,6 +1,5 @@
 import os
 import pytest
-import httpx
 from src.shared_kernel.adapter.app import create_app
 from fastapi.testclient import TestClient
 
@@ -21,11 +20,11 @@ def client():
 
 
 @pytest.fixture
-def token(client):
+def token():
     yield ""
 
-
-def test_user_can_insert_image_with_valid(client, token):
+@pytest.mark.asyncio
+async def test_user_can_insert_image_with_valid(client, token):
     # given : 유효한 payload
     headers = {"id": ID, "token": token}
     print(headers)
@@ -46,7 +45,8 @@ def test_user_can_insert_image_with_valid(client, token):
     print(response.json()["data"]["generated_id"])
 
 
-def test_user_cannot_insert_image_with_non_header(client):
+@pytest.mark.asyncio
+async def test_user_cannot_insert_image_with_non_header(client):
     # given : 유효하지 않은 payload (header 없이 요청)
 
     with open(IMAGE_PATH, "rb") as f:
@@ -62,7 +62,8 @@ def test_user_cannot_insert_image_with_non_header(client):
     assert response.json()["meta"]["message"] == "A required value is missing. Please check."
 
 
-def test_user_cannot_insert_image_with_non_image(client, token):
+@pytest.mark.asyncio
+async def test_user_cannot_insert_image_with_non_image(client, token):
     # given : 유효하지 않은 payload (file 없이 요청)
     headers = {"id": ID, "token": token}
 
@@ -77,7 +78,8 @@ def test_user_cannot_insert_image_with_non_image(client, token):
     assert response.json()["meta"]["message"] == "A required value is missing. Please check."
 
 
-def test_user_can_get_main_content(client, token):
+@pytest.mark.asyncio
+async def test_user_can_get_main_content(client, token):
     # given : 유효한 payload
     headers = {"id": ID, "token": token, "generated-id": "4.jpg"}
 
@@ -95,7 +97,8 @@ def test_user_can_get_main_content(client, token):
     print(response.json()["data"]["text_content"])
 
 
-def test_user_can_get_coord_content(client, token):
+@pytest.mark.asyncio
+async def test_user_can_get_coord_content(client, token):
     # given : 유효한 payload
     headers = {"id": ID, "token": token, "generated-id": "4.jpg"}
 
@@ -111,7 +114,8 @@ def test_user_can_get_coord_content(client, token):
     assert response.json()["data"]["coord_content"]
 
 
-def test_user_can_get_video_content(client, token):
+@pytest.mark.asyncio
+async def test_user_can_get_video_content(client, token):
     # given : 유효한 payload
     headers = {"id": ID, "token": token, "generated-id": "4.jpg"}
 
@@ -127,7 +131,8 @@ def test_user_can_get_video_content(client, token):
     assert response.json()["data"]["video_content"]
 
 
-def test_user_can_insert_user_content_review(client, token):
+@pytest.mark.asyncio
+async def test_user_can_insert_user_content_review(client, token):
     # given : 유효한 payload
     headers = {"id": ID, "token": token, "generated-id": "4.jpg"}
     body = {"like_status": True, "review_content": "thank you!!"}
