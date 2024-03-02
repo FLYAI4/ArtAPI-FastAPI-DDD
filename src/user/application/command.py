@@ -22,15 +22,17 @@ from src.user.adapter.rest.request import InsertUserContentReview
 class UserCommandUseCase:
     def __init__(
             self,
+            user_repository: UserRepository,
             insert_image_service: InsertImageService,
             mongo_session: any = None,
             postgre_session: Session = None,
             azure_blob_session: Session = None
     ) -> None:
+        self.user_repository = user_repository
         self.insert_image_service = insert_image_service
-        self.mogno_session = mongo_session
-        self.postgre_session = postgre_session
-        self.azure_blob_session = azure_blob_session
+        self.mongo_session = mongo_session()
+        self.postgre_session = postgre_session()
+        self.azure_blob_session = azure_blob_session()
 
     async def insert_image(
             self, id: str, file: UploadFile
@@ -58,14 +60,14 @@ class UserCommandUseCase:
         try:
             # load content
             content_name = ContentName(image_name=generated_id)
-            image_content = UserRepository.get_origin_image(
+            image_content = self.user_repository.get_origin_image(
                 self.azure_blob_session, content_name
             )
-            text_content = UserRepository.get_text_content(
-                self.mogno_session, content_name
-            )
-            audio_content = UserRepository.get_audio_content(
+            audio_content = self.user_repository.get_audio_content(
                 self.azure_blob_session, content_name
+            )
+            text_content = self.user_repository.get_text_content(
+                self.mongo_session, content_name
             )
 
             return MainContent(
@@ -85,8 +87,8 @@ class UserCommandUseCase:
         try:
             # load content
             content_name = ContentName(image_name=generated_id)
-            coord_content = UserRepository.get_coord_content(
-                self.mogno_session, content_name
+            coord_content = self.user_repository.get_coord_content(
+                self.mongo_session, content_name
             )
             return CoordContent(
                 coord_content=coord_content.data.decode()
@@ -103,7 +105,7 @@ class UserCommandUseCase:
         try:
             # load content
             content_name = ContentName(image_name=generated_id)
-            video_content = UserRepository.get_video_content(
+            video_content = self.user_repository.get_video_content(
                 self.azure_blob_session, content_name
             )
             return VideoContent(
@@ -128,7 +130,7 @@ class UserCommandUseCase:
                 like_status=request.like_status,
                 review_content=request.review_content
             )
-            return UserRepository.insert_user_review(
+            return self.user_repository.insert_user_review(
                 self.postgre_session,
                 user_review
             )
