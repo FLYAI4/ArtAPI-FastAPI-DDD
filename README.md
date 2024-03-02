@@ -20,6 +20,7 @@ ArtAPI refactoring with Hexagonal Architcture for DDD.
 │   └── stream.proto
 ├── requirements.txt
 ├── src
+│   ├── __init__.py
 │   ├── account
 │   │   ├── __init__.py
 │   │   ├── adapter
@@ -45,6 +46,7 @@ ArtAPI refactoring with Hexagonal Architcture for DDD.
 │   │   │       └── cipher.py
 │   │   └── infra
 │   │       ├── __init__.py
+│   │       ├── container.py
 │   │       └── database
 │   │           ├── __init__.py
 │   │           ├── model.py
@@ -72,6 +74,7 @@ ArtAPI refactoring with Hexagonal Architcture for DDD.
 │   │   │   └── util.py
 │   │   └── infra
 │   │       ├── __init__.py
+│   │       ├── container.py
 │   │       └── database
 │   │           ├── __init__.py
 │   │           └── repository.py
@@ -88,15 +91,18 @@ ArtAPI refactoring with Hexagonal Architcture for DDD.
 │   │   │   └── jwt.py
 │   │   └── infra
 │   │       ├── __init__.py
+│   │       ├── container.py
 │   │       ├── database
 │   │       │   ├── __init__.py
 │   │       │   ├── connection.py
 │   │       │   └── model.py
+│   │       ├── elasticsearch.py
 │   │       └── fastapi
 │   │           ├── __init__.py
 │   │           ├── auth.py
 │   │           ├── config.py
 │   │           ├── error_handler.py
+│   │           ├── logger.py
 │   │           └── util.py
 │   └── user
 │       ├── __init__.py
@@ -122,8 +128,7 @@ ArtAPI refactoring with Hexagonal Architcture for DDD.
 │       │   ├── demo
 │       │   │   ├── loading.gif
 │       │   │   ├── main.mp3
-│       │   │   ├── origin_img.jpg
-│       │   │   └── video.mp4
+│       │   │   └── origin_img.jpg
 │       │   ├── entity.py
 │       │   ├── errorcode.py
 │       │   ├── exception.py
@@ -134,6 +139,7 @@ ArtAPI refactoring with Hexagonal Architcture for DDD.
 │       │       └── local_file.py
 │       └── infra
 │           ├── __init__.py
+│           ├── container.py
 │           ├── database
 │           │   ├── __init__.py
 │           │   ├── model.py
@@ -159,8 +165,7 @@ ArtAPI refactoring with Hexagonal Architcture for DDD.
     │   ├── test_database_repository.py
     │   ├── test_img
     │   │   ├── main.mp3
-    │   │   ├── origin_img.jpg
-    │   │   └── video.mp4
+    │   │   └── origin_img.jpg
     │   └── test_service_generated_content.py
     └── user
         ├── __init__.py
@@ -172,7 +177,6 @@ ArtAPI refactoring with Hexagonal Architcture for DDD.
         │   ├── hello.jpg
         │   ├── main.mp3
         │   ├── test.jpg
-        │   ├── video.mp4
         │   └── wrong.jpg
         ├── test_service_generated_content.py
         └── test_service_insert_image.py
