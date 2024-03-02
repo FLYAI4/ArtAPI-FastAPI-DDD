@@ -22,10 +22,12 @@ from src.user.adapter.rest.request import InsertUserContentReview
 class UserCommandUseCase:
     def __init__(
             self,
+            insert_image_service: InsertImageService,
             mongo_session: any = None,
             postgre_session: Session = None,
             azure_blob_session: Session = None
     ) -> None:
+        self.insert_image_service = insert_image_service
         self.mogno_session = mongo_session
         self.postgre_session = postgre_session
         self.azure_blob_session = azure_blob_session
@@ -41,7 +43,7 @@ class UserCommandUseCase:
             )
 
             # find image_name
-            file_info = await InsertImageService().insert_image(origin_image)
+            file_info = await self.insert_image_service.insert_image(origin_image)
 
             return file_info
         except UserServiceError as e:
